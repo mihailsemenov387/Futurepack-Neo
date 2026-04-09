@@ -5,6 +5,7 @@ import net.futurepack.event.ServerEvents;
 import net.futurepack.network.Networking;
 import net.futurepack.registry.AttachmentRegistry;
 import net.futurepack.registry.ItemRegistry;
+import net.futurepack.research.ResearchManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
@@ -28,7 +29,7 @@ public class FuturepackNeo {
 
     public FuturepackNeo(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
-
+        ResearchManager.init();
 
         ItemRegistry.ITEMS.register(modEventBus);
         AttachmentRegistry.ATTACHMENT_TYPES.register(modEventBus);

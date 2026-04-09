@@ -1,7 +1,7 @@
 package net.futurepack.network;
 
 
-import net.futurepack.client.gui.EScanner.EScannerScreen;
+import net.futurepack.research.ClientResearchState;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -15,7 +15,7 @@ public class Networking {
                 SyncResearchPayload.STREAM_CODEC,
                 (payload, context) -> {
                     context.enqueueWork(() -> {
-                        EScannerScreen.updateClientProgress(payload.completedIds(), payload.revealedIds());
+                        ClientResearchState.update(payload.completedIds(), payload.revealedIds());
                     });
                 }
         );
