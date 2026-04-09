@@ -1,0 +1,13 @@
+{
+  "itemGroup.futurepack": "Example Mod Tab",
+  "block.futurepack.example_block": "Example Block",
+  "item.futurepack.example_item": "Example Item",
+
+  "futurepack.configuration.title": "Futurepack Neo Configs",
+  "futurepack.configuration.section.futurepack.common.toml": "Futurepack Neo Configs",
+  "futurepack.configuration.section.futurepack.common.toml.title": "Futurepack Neo Configs",
+  "futurepack.configuration.items": "Item List",
+  "futurepack.configuration.logDirtBlock": "Log Dirt Block",
+  "futurepack.configuration.magicNumberIntroduction": "Magic Number Text",
+  "futurepack.configuration.magicNumber": "Magic Number"
+}
