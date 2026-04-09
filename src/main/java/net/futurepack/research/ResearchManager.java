@@ -1,5 +1,7 @@
 package net.futurepack.research;
 
+import net.futurepack.client.gui.EScanner.Entrys.StudyPage;
+import net.futurepack.client.gui.EScanner.Entrys.TextPage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -16,23 +18,76 @@ public class ResearchManager {
         // 1. Регистрируем табы
         registerTab(new ResearchTab("space", Component.literal("Космос"), new ItemStack(Items.ENDER_EYE)));
         registerTab(new ResearchTab("adventure", Component.literal("Приключения"), new ItemStack(Items.IRON_SWORD)));
+        registerTab(new ResearchTab("tech", Component.literal("Приключения"), new ItemStack(Items.IRON_SWORD)));
+        registerTab(new ResearchTab("astronomy", Component.literal("Приключения"), new ItemStack(Items.IRON_SWORD)));
+        registerTab(new ResearchTab("thermodynamics", Component.literal("Термодинамика"), new ItemStack(Items.NETHER_STAR)));
 
         // 2. Регистрируем ноды
-        registerNode(new ResearchNode("start", "space",
-                Component.literal("Основы"), Component.literal("Начало пути."),
+//        registerNode(new ResearchNode("start", "space",
+//                Component.literal("Основы"), Component.literal("Начало пути."),
+//                new ItemStack(Items.COMPASS), 0, 0,
+//                List.of(), List.of(), false));
+//
+//        registerNode(new ResearchNode("neon", "space",
+//                Component.literal("Неон"), Component.literal("Энергия газов."),
+//                new ItemStack(Items.BEACON), 0, -60,
+//                List.of("start"), List.of("start"), false));
+//
+//        registerNode(new ResearchNode("laser_tech_I", "thermodynamics",
+//                Component.literal("laser"), Component.literal("LASERS!!!."),
+//                new ItemStack(Items.ECHO_SHARD), 0, 0,
+//                List.of(), List.of("start", "neon"), false)); // Скрытая нода в другом табе!
+//
+//        registerNode(new ResearchNode("alien_tech", "adventure",
+//                Component.literal("НЛО"), Component.literal("Секрет."),
+//                new ItemStack(Items.ECHO_SHARD), 0, 0,
+//                List.of(), List.of("start"), true)); // Скрытая нода в другом табе!
+//
+//        // 1. КОРЕНЬ (Виден сразу, доступен для изучения)
+//        registerNode(new ResearchNode("start", "space",
+//                Component.literal("Основы"), Component.literal("Нажми 'Изучить', чтобы начать."),
+//                new ItemStack(Items.COMPASS), 0, 0,
+//                List.of(), List.of(), // Нет родителей, нет требований
+//                false));
+//
+//        // 2. СЛЕДУЮЩИЙ ШАГ (Будет LOCKED (серым), пока не изучишь "start")
+//        registerNode(new ResearchNode("neon", "space",
+//                Component.literal("Неон"), Component.literal("Теперь изучи это."),
+//                new ItemStack(Items.BEACON), 0, -60,
+//                List.of("start"),    // Линия от "start"
+//                List.of("start"),    // ТРЕБОВАНИЕ изученного "start"
+//                false));
+//
+//        // 3. СЕКРЕТ (Вообще не появится, пока не просканируешь блок железа)
+//        registerNode(new ResearchNode("iron_tech", "space",
+//                Component.literal("Железо"), Component.literal("Ты нашел это!"),
+//                new ItemStack(Items.IRON_INGOT), 60, -60,
+//                List.of("start"),
+//                List.of("start"),
+//                true)); // Скрыто по умолчанию!
+
+
+
+        registerNode(new ResearchNode(
+                "start", "space",
+                Component.literal("Основы"),
                 new ItemStack(Items.COMPASS), 0, 0,
-                List.of(), List.of(), false));
+                List.of(), List.of(), false,
 
-        registerNode(new ResearchNode("neon", "space",
-                Component.literal("Неон"), Component.literal("Энергия газов."),
+                new TextPage("Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.") // <-- Передали TextPage
+        ));
+
+// 2. Нода с картинкой и кнопкой "Изучить"
+        registerNode(new ResearchNode(
+                "neon", "space",
+                Component.literal("Неон"),
                 new ItemStack(Items.BEACON), 0, -60,
-                List.of("start"), List.of("start"), false));
+                List.of("start"), List.of("start"), false,
 
-        registerNode(new ResearchNode("alien_tech", "adventure",
-                Component.literal("НЛО"), Component.literal("Секрет."),
-                new ItemStack(Items.ECHO_SHARD), 0, 0,
-                List.of(), List.of("start"), true)); // Скрытая нода в другом табе!
+                new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png") // <-- Передали StudyPage
+        ));
     }
+
 
     private static void registerTab(ResearchTab tab) {
         TABS.put(tab.id(), tab);

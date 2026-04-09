@@ -15,7 +15,7 @@ public class ServerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             var data = player.getData(AttachmentRegistry.RESEARCH_DATA);
             PacketDistributor.sendToPlayer(player,
-                    new SyncResearchPayload(data.completedIds(), data.revealedIds()));
+                    new SyncResearchPayload(data.completedIds(), data.revealedIds(), data.readIds()));
             System.out.println("DEBUG: Исследования игрока " + player.getName().getString() + " синхронизированы.");
         }
     }

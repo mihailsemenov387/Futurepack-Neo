@@ -21,6 +21,7 @@ public class TreeRenderComponent {
     private double scrollY = 0;
     private float zoom = 1.0f;
 
+    private ResearchNode hoveredNode = null;
     private final ResearchTabsScreen parent;
 
     public TreeRenderComponent(ResearchTabsScreen parent) {
@@ -29,6 +30,8 @@ public class TreeRenderComponent {
 
     // Заменили ResearchTabsScreen.Tab на просто ResearchTab
     public void render(GuiGraphics g, int x, int y, int width, int height, int mX, int mY, ResearchTab currentTab) {
+        this.hoveredNode = null; // Сбрасываем перед каждым кадром
+
         renderTechGrid(g, x, y, width, height);
 
         g.pose().pushPose();
@@ -36,44 +39,46 @@ public class TreeRenderComponent {
         g.pose().scale(zoom, zoom, 1.0f);
         g.pose().translate((int)scrollX, (int)scrollY, 0);
 
-        // Получаем ноды только для текущей вкладки
         List<ResearchNode> nodes = ResearchManager.getNodesForTab(currentTab.id());
 
+        // 1. Рисуем линии
         for (ResearchNode node : nodes) {
             Status status = ClientResearchState.getStatus(node);
             if (status == Status.HIDDEN) continue;
-
             for (String pId : node.parents()) {
                 ResearchNode p = ResearchManager.getNode(pId);
-                if (p != null && ClientResearchState.getStatus(p) != Status.HIDDEN) {
+                if (p != null && ClientResearchState.getStatus(pId) != Status.HIDDEN) {
                     int color = (status == Status.COMPLETED) ? COLOR_CYAN : 0xFF333333;
                     renderTechLine(g, p.treeX(), p.treeY(), node.treeX(), node.treeY(), color);
                 }
             }
         }
 
-        ResearchNode hovered = null;
+        // 2. Рисуем ноды и ЗАПОМИНАЕМ наведение
         for (ResearchNode node : nodes) {
             Status status = ClientResearchState.getStatus(node);
             if (status != Status.HIDDEN) {
                 renderTechNode(g, node, status);
             }
-
+            // Проверяем мышь
             if (isMouseOverNode(node, mX, mY, x, y, width, height)) {
-                hovered = node;
+                this.hoveredNode = node;
             }
         }
-
         g.pose().popPose();
+    }
 
-        if (hovered != null) {
-            Status status = ClientResearchState.getStatus(hovered);
+    // НОВЫЙ МЕТОД: Рисует тултип ПОВЕРХ всего
+    public void drawTooltip(GuiGraphics g, int mX, int mY) {
+        if (this.hoveredNode != null) {
+            Status status = ClientResearchState.getStatus(hoveredNode);
             g.renderTooltip(parent.getMinecraft().font, List.of(
-                    hovered.title().getVisualOrderText(),
+                    hoveredNode.title().getVisualOrderText(),
                     Component.literal("Статус: " + status).withStyle(ChatFormatting.GRAY).getVisualOrderText()
             ), mX, mY);
         }
     }
+
 
     private void renderTechGrid(GuiGraphics g, int x, int y, int width, int height) {
         g.fill(x, y, x + width, y + height, 0xFF00080A);
@@ -115,6 +120,33 @@ public class TreeRenderComponent {
 
         // В рекорде ResearchNode поле называется icon()
         g.renderItem(node.icon(), x - 8, y - 8);
+
+        // Blinking
+        if (!ClientResearchState.isRead(node.id()) && status != Status.HIDDEN) {
+            // Рассчитываем мигание (альфа-канал от 100 до 255)
+            float wave = (float) (Math.sin(System.currentTimeMillis() / 150.0) * 0.5 + 0.5);
+            int alpha = (int)(150 + (105 * wave));
+            int redColor = (alpha << 24) | 0xFF0000; // Красный с мигающей прозрачностью
+
+            g.pose().pushPose();
+            g.pose().translate(0, 0, 200); // Выносим чуть вперед, чтобы точка была над иконкой
+
+            // Рисуем маленькую точку в верхнем правом углу ноды
+            // (x+8, y-12) — примерные координаты угла
+            g.fill(x + 7, y - 11, x + 11, y - 7, 0xFF000000); // Черная обводка точки
+            g.fill(x + 8, y - 10, x + 10, y - 8, redColor);   // Сама красная точка
+
+            g.pose().popPose();
+        }
+
+//        if (!ClientResearchState.isRead(node.id())) {
+//            float wave = (float) (Math.sin(System.currentTimeMillis() / 200.0) * 0.5 + 0.5);
+//            int alpha = (int) (100 + (155 * wave));
+//            // Рисуем красный огонек в углу (x+8, y-10)
+//            g.fill(x + 7, y - 11, x + 11, y - 7, 0xFF000000); // Обводка
+//            g.fill(x + 8, y - 10, x + 10, y - 8, (alpha << 24) | 0xFF0000); // Лампочка
+//        }
+
     }
 
     public boolean mouseClicked(double mX, double mY, int btn, int dX, int dY, int dW, int dH) {

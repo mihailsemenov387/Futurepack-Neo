@@ -36,7 +36,7 @@ public class EScannerItem extends Item {
 
         if (!level.isClientSide && player != null) {
             if (state.is(Blocks.IRON_BLOCK)) {
-                revealResearch(player, "iron_tech");
+                revealResearch(player, "alien_tech");
                 player.sendSystemMessage(Component.literal("§b[E-Scanner]§f Железо просканировано!"));
                 return InteractionResult.SUCCESS;
             } else {
@@ -72,7 +72,7 @@ public class EScannerItem extends Item {
 
         PacketDistributor.sendToPlayer(
                 (ServerPlayer) player,
-                new SyncResearchPayload(data.completedIds(), data.revealedIds())
+                new SyncResearchPayload(data.completedIds(), data.revealedIds(), data.readIds())
         );
 
         System.out.println("DEBUG: research " + id + " sent to: " + player.getName().getString());

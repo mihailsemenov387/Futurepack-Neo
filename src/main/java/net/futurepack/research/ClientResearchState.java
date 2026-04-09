@@ -6,6 +6,7 @@ import java.util.Set;
 public class ClientResearchState {
     private static final Set<String> COMPLETED = new HashSet<>();
     private static final Set<String> REVEALED = new HashSet<>();
+    private static final Set<String> READ_NODES = new HashSet<>();
 
     // Вызывается из пакета (SyncResearchPayload)
     public static void update(Set<String> completed, Set<String> revealed) {
@@ -19,6 +20,17 @@ public class ClientResearchState {
         REVEALED.clear();
     }
 
+    public static void markAsRead(String id) {
+        READ_NODES.add(id);
+    }
+
+    public static boolean isRead(String id) {
+        return READ_NODES.contains(id);
+    }
+
+    public static boolean isCompleted(String id) {
+        return COMPLETED.contains(id);
+    }
     // УМНАЯ ЛОГИКА СТАТУСА (Отвязана от GUI!)
     public static ResearchNode.Status getStatus(ResearchNode node) {
         if (node == null) return ResearchNode.Status.HIDDEN;
