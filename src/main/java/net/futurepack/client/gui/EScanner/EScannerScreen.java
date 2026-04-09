@@ -163,9 +163,6 @@ public class EScannerScreen extends Screen {
     }
 
     private Status getNodeStatus(ResearchNode node) {
-//        if (CLIENT_PROGRESS.contains(node.id())) return Status.AVAILABLE;
-//        boolean parentsDone = node.parents().isEmpty() || node.parents().stream().allMatch(CLIENT_PROGRESS::contains);
-//        return parentsDone ? Status.AVAILABLE : Status.LOCKED;
 
         // 1. ПРИОРИТЕТ: Если технология уже в списке изученных
         if (COMPLETED.contains(node.id())) {

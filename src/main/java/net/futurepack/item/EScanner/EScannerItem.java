@@ -1,5 +1,6 @@
 package net.futurepack.item.EScanner;
 
+import net.futurepack.client.gui.EScanner.EScannerMainScreen;
 import net.minecraft.core.BlockPos;
 import net.futurepack.network.SyncResearchPayload;
 import net.minecraft.network.chat.Component;
@@ -55,8 +56,12 @@ public class EScannerItem extends Item {
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }
 
+//    private void openGui() {
+//        Minecraft.getInstance().setScreen(new EScannerScreen());
+//    }
+
     private void openGui() {
-        Minecraft.getInstance().setScreen(new EScannerScreen());
+        Minecraft.getInstance().setScreen(new EScannerMainScreen());
     }
 
 

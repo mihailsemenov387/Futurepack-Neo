@@ -1,6 +1,7 @@
 package net.futurepack.event;
 
 import net.futurepack.client.gui.EScanner.EScannerScreen;
+import net.futurepack.client.gui.EScanner.EScannerScreen;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import java.util.HashSet;
