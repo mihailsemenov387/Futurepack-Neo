@@ -11,7 +11,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onPlayerLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        ClientResearchState.clear();
-        System.out.println("[Futurepack] Данные исследований успешно сброшены.");
+//        ClientResearchState.clear();
+//        System.out.println("[Futurepack] Данные исследований успешно сброшены.");
     }
 }

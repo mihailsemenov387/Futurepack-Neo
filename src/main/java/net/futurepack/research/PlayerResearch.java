@@ -2,7 +2,6 @@ package net.futurepack.research;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.futurepack.network.SyncResearchPayload;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -31,7 +30,7 @@ public record PlayerResearch(Set<String> completedIds, Set<String> revealedIds, 
                     Codec.STRING.listOf().xmap(
                             list -> (Set<String>) new HashSet<>(list), // Из List в Set
                             set -> new ArrayList<>(set)               // Из Set в List
-                    ).fieldOf("read").forGetter(PlayerResearch::revealedIds)
+                    ).fieldOf("read").forGetter(PlayerResearch::readIds)
 
             ).apply(instance, PlayerResearch::new)
     );

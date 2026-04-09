@@ -2,10 +2,9 @@ package net.futurepack.client.gui.EScanner;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.futurepack.network.RequestCompletePayload;
-import net.futurepack.research.ClientResearchState;
-import net.futurepack.research.ResearchManager;
-import net.futurepack.research.ResearchNode;
-import net.futurepack.research.ResearchTab;
+import net.futurepack.network.RequestReadPayload;
+import net.futurepack.research.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -51,17 +50,28 @@ public class ResearchTabsScreen extends Screen {
 
     public void openEntry(ResearchNode node) {
         this.selectedEntry = node;
-        ClientResearchState.markAsRead(node.id());
+//        ClientResearchState.markAsRead(node.id());
+//        ResearchHelper.updateProgress(Minecraft.getInstance().player , "alien_tech", ResearchHelper.ProgressType.READ);
+        PacketDistributor.sendToServer(new RequestReadPayload(node.id()));
         if (node.page() != null) {
             node.page().init(this, node, this.leftPos + DISP_X_OFF, this.topPos + DISP_Y_OFF, DISP_W, DISP_H);
         }
     }
 
+
     private void closeEntry() {
         if (this.selectedEntry != null && this.selectedEntry.page() != null) {
+            this.selectedEntry.page().onClose(this, this.selectedEntry);
+        }
+        this.selectedEntry = null; // Теперь removed() ничего не сделает, так как тут null
+    }
+
+    @Override
+    public void removed() {
+        if (selectedEntry != null && selectedEntry.page() != null) {
             selectedEntry.page().onClose(this, selectedEntry);
         }
-        this.selectedEntry = null;
+        super.removed();
     }
 
     @Override

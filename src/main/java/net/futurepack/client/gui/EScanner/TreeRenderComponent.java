@@ -121,7 +121,7 @@ public class TreeRenderComponent {
         // В рекорде ResearchNode поле называется icon()
         g.renderItem(node.icon(), x - 8, y - 8);
 
-        // Blinking
+//         Blinking
         if (!ClientResearchState.isRead(node.id()) && status != Status.HIDDEN) {
             // Рассчитываем мигание (альфа-канал от 100 до 255)
             float wave = (float) (Math.sin(System.currentTimeMillis() / 150.0) * 0.5 + 0.5);
@@ -138,6 +138,12 @@ public class TreeRenderComponent {
 
             g.pose().popPose();
         }
+//        if (!ClientResearchState.isRead(node.id())) {
+//            float wave = (float) (Math.sin(System.currentTimeMillis() / 200.0) * 0.5 + 0.5);
+//            int alpha = (int)(100 + (155 * wave));
+//            g.fill(x + 8, y - 10, x + 10, y - 8, (alpha << 24) | 0xFF0000);
+//        }
+
 
 //        if (!ClientResearchState.isRead(node.id())) {
 //            float wave = (float) (Math.sin(System.currentTimeMillis() / 200.0) * 0.5 + 0.5);

@@ -1,8 +1,8 @@
 package net.futurepack.item.EScanner;
 
 import net.futurepack.client.gui.EScanner.EScannerMainScreen;
+import net.futurepack.research.ResearchHelper;
 import net.minecraft.core.BlockPos;
-import net.futurepack.network.SyncResearchPayload;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -36,7 +36,9 @@ public class EScannerItem extends Item {
 
         if (!level.isClientSide && player != null) {
             if (state.is(Blocks.IRON_BLOCK)) {
-                revealResearch(player, "alien_tech");
+                ResearchHelper.updateProgress(player, "iron_tech", ResearchHelper.ProgressType.REVEAL);
+                ResearchHelper.updateProgress(player, "alien_tech", ResearchHelper.ProgressType.REVEAL);
+                System.out.println("DEBUG: research " + "alien_tech" + " sent to: " + player.getName().getString());
                 player.sendSystemMessage(Component.literal("§b[E-Scanner]§f Железо просканировано!"));
                 return InteractionResult.SUCCESS;
             } else {
@@ -70,26 +72,15 @@ public class EScannerItem extends Item {
 
         data.completedIds().add(id);
 
-        PacketDistributor.sendToPlayer(
-                (ServerPlayer) player,
-                new SyncResearchPayload(data.completedIds(), data.revealedIds(), data.readIds())
-        );
+//        PacketDistributor.sendToPlayer(
+//                (ServerPlayer) player,
+//                new SyncResearchPayload(data.completedIds(), data.revealedIds(), data.readIds())
+//        );
 
-        System.out.println("DEBUG: research " + id + " sent to: " + player.getName().getString());
+
     }
 
-    private void revealResearch(Player player, String id) {
-        var data = player.getData(RESEARCH_DATA);
 
-        // Добавляем в список "ОБНАРУЖЕНО"
-        if (data.revealedIds().add(id)) {
-            // Синхронизируем с клиентом
-            PacketDistributor.sendToPlayer((ServerPlayer) player,
-                    new SyncResearchPayload(data.completedIds(), data.revealedIds()));
-
-            player.sendSystemMessage(Component.literal("§b[E-Scanner]§f Чертеж технологии получен!"));
-        }
-    }
 
 
 }

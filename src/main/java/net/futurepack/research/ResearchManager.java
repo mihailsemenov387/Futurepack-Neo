@@ -58,13 +58,13 @@ public class ResearchManager {
 //                List.of("start"),    // ТРЕБОВАНИЕ изученного "start"
 //                false));
 //
-//        // 3. СЕКРЕТ (Вообще не появится, пока не просканируешь блок железа)
-//        registerNode(new ResearchNode("iron_tech", "space",
-//                Component.literal("Железо"), Component.literal("Ты нашел это!"),
-//                new ItemStack(Items.IRON_INGOT), 60, -60,
-//                List.of("start"),
-//                List.of("start"),
-//                true)); // Скрыто по умолчанию!
+        // 3. СЕКРЕТ (Вообще не появится, пока не просканируешь блок железа)
+        registerNode(new ResearchNode("iron_tech", "space",
+                Component.literal("Железо"),
+                new ItemStack(Items.IRON_INGOT), 60, -60,
+                List.of("start"),
+                List.of("start"),
+                true, new TextPage("secret"))); // Скрыто по умолчанию!
 
 
 

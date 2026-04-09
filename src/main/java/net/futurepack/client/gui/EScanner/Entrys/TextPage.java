@@ -21,7 +21,7 @@ public class TextPage extends AbstractResearchPage {
         // Рисуем заголовок белым цветом
         renderTitle(g, node.title(), 0xFFFFFF);
 
-        g.drawWordWrap(Minecraft.getInstance().font, content, x + 10, y + 30, w - 20, 0xCCCCCC);
+        g.drawWordWrap(Minecraft.getInstance().font, content, x + 10, y + 30, w - 20, 0x0000FF);
     }
 
     @Override
