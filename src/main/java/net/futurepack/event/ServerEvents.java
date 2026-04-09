@@ -14,7 +14,7 @@ public class ServerEvents {
             var data = player.getData(AttachmentRegistry.RESEARCH_DATA);
 //            PacketDistributor.sendToPlayer(player,
 //                    new SyncResearchPayload(data.completedIds(), data.revealedIds(), data.readIds()));
-            System.out.println("DEBUG: Исследования игрока " + player.getName().getString() + " синхронизированы.");
+            System.out.println("Hello from server");
         }
     }
 }

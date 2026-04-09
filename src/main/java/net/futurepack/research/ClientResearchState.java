@@ -30,13 +30,17 @@ public class ClientResearchState {
     }
 
     public static boolean isRead(String id) {
-//        return getData().readIds().contains(id);
-
         var data = getData();
         if (data == null) return true;
+
+        ResearchNode.Status status = getStatus(id);
+
+        if (status == ResearchNode.Status.LOCKED || status == ResearchNode.Status.HIDDEN) {
+            return true;
+        }
+
         return data.readIds().contains(id) || data.completedIds().contains(id);
     }
-
     public static boolean isCompleted(String id) {
         return getData().completedIds().contains(id);
     }

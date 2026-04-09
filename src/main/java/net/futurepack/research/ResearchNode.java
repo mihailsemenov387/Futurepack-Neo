@@ -22,6 +22,7 @@
 package net.futurepack.research;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.futurepack.client.gui.EScanner.Entrys.IResearchPage; // Импортируем нашу страницу!
 import java.util.List;
@@ -31,6 +32,7 @@ public record ResearchNode(
         String tabId,
         Component title, // Оставили для тултипов в дереве
         ItemStack icon,
+        ResourceLocation customIcon,
         int treeX, int treeY,
         List<String> parents,
         List<String> requirements,

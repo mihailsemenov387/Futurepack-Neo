@@ -10,6 +10,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.futurepack.research.ResearchCommand;
 
 import com.mojang.logging.LogUtils;
 
@@ -30,6 +32,11 @@ public class FuturepackNeo {
     public FuturepackNeo(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
         ResearchManager.init();
+
+        // Если добавляешь в конструктор главного класса:
+        NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, event -> {
+            ResearchCommand.register(event.getDispatcher());
+        });
 
         ItemRegistry.ITEMS.register(modEventBus);
         AttachmentRegistry.ATTACHMENT_TYPES.register(modEventBus);

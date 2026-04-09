@@ -2,9 +2,8 @@ package net.futurepack.item.EScanner;
 
 import net.futurepack.client.gui.EScanner.EScannerMainScreen;
 import net.futurepack.research.ResearchHelper;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -13,13 +12,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.client.Minecraft;
-//import net.futurepack.client.gui.EScanner.EScannerScreen;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.PacketDistributor;
-
-import static net.futurepack.registry.AttachmentRegistry.RESEARCH_DATA;
 
 public class EScannerItem extends Item {
 
@@ -31,24 +25,22 @@ public class EScannerItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
-        BlockPos pos = context.getClickedPos();
-        BlockState state = level.getBlockState(pos);
+        BlockState state = level.getBlockState(context.getClickedPos());
 
-        if (!level.isClientSide && player != null) {
+        if (player == null) return InteractionResult.PASS;
+
+        if (!level.isClientSide) {
             if (state.is(Blocks.IRON_BLOCK)) {
                 ResearchHelper.updateProgress(player, "iron_tech", ResearchHelper.ProgressType.REVEAL);
                 ResearchHelper.updateProgress(player, "alien_tech", ResearchHelper.ProgressType.REVEAL);
-                System.out.println("DEBUG: research " + "alien_tech" + " sent to: " + player.getName().getString());
-                player.sendSystemMessage(Component.literal("§b[E-Scanner]§f Железо просканировано!"));
+
+                player.sendSystemMessage(Component.literal("§b[E-Scanner]§f Данные получены: Железо и НЛО"));
                 return InteractionResult.SUCCESS;
-            } else {
-                player.sendSystemMessage(Component.literal("§c[E-Scanner]§f Этот блок не содержит данных."));
             }
         }
 
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
-
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -58,29 +50,7 @@ public class EScannerItem extends Item {
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }
 
-//    private void openGui() {
-//        Minecraft.getInstance().setScreen(new EScannerScreen());
-//    }
-
     private void openGui() {
         Minecraft.getInstance().setScreen(new EScannerMainScreen());
     }
-
-
-    private void completeResearch(Player player, String id) {
-        var data = player.getData(RESEARCH_DATA);
-
-        data.completedIds().add(id);
-
-//        PacketDistributor.sendToPlayer(
-//                (ServerPlayer) player,
-//                new SyncResearchPayload(data.completedIds(), data.revealedIds(), data.readIds())
-//        );
-
-
-    }
-
-
-
-
 }

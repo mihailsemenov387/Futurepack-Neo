@@ -1,5 +1,6 @@
 package net.futurepack.client.gui.EScanner;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.futurepack.research.ClientResearchState;
 import net.futurepack.research.ResearchManager;
 import net.futurepack.research.ResearchNode;
@@ -57,9 +58,9 @@ public class TreeRenderComponent {
         // 2. Рисуем ноды и ЗАПОМИНАЕМ наведение
         for (ResearchNode node : nodes) {
             Status status = ClientResearchState.getStatus(node);
-            if (status != Status.HIDDEN) {
-                renderTechNode(g, node, status);
-            }
+            if (status == Status.HIDDEN) continue;
+
+            renderTechNode(g, node, status);
             // Проверяем мышь
             if (isMouseOverNode(node, mX, mY, x, y, width, height)) {
                 this.hoveredNode = node;
@@ -109,7 +110,12 @@ public class TreeRenderComponent {
     private void renderTechNode(GuiGraphics g, ResearchNode node, Status status) {
         int x = node.treeX();
         int y = node.treeY();
-        int color = (status == Status.COMPLETED) ? COLOR_CYAN : (status == Status.AVAILABLE ? 0xFFFFFFFF : 0xFF444444);
+        int color = switch (status) {
+            case COMPLETED -> COLOR_CYAN;
+            case AVAILABLE -> 0xFFFFFFFF;
+            default -> 0xFF444444;
+        };
+
         g.fill(x - 11, y - 11, x + 11, y + 11, 0xFF000000);
         g.fill(x - 10, y - 10, x + 10, y + 10, color);
         g.fill(x - 9, y - 9, x + 9, y + 9, 0xFF00080A);
@@ -118,8 +124,18 @@ public class TreeRenderComponent {
         g.fill(x - 11, y + 10, x - 7, y + 11, color);
         g.fill(x + 7, y + 10, x + 11, y + 11, color);
 
+
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        com.mojang.blaze3d.platform.Lighting.setupFor3DItems(); // ВКЛЮЧАЕМ СВЕТ
+
+//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F); // TODO:!!!!
         // В рекорде ResearchNode поле называется icon()
-        g.renderItem(node.icon(), x - 8, y - 8);
+
+        if (node.customIcon() != null) {
+            g.blit(node.customIcon(), x - 8, y - 8, 0, 0, 16, 16, 16, 16);
+        } else {
+            g.renderItem(node.icon(), x - 8, y - 8);
+        }
 
 //         Blinking
         if (!ClientResearchState.isRead(node.id()) && status != Status.HIDDEN) {
@@ -131,27 +147,14 @@ public class TreeRenderComponent {
             g.pose().pushPose();
             g.pose().translate(0, 0, 200); // Выносим чуть вперед, чтобы точка была над иконкой
 
-            // Рисуем маленькую точку в верхнем правом углу ноды
+
             // (x+8, y-12) — примерные координаты угла
             g.fill(x + 7, y - 11, x + 11, y - 7, 0xFF000000); // Черная обводка точки
             g.fill(x + 8, y - 10, x + 10, y - 8, redColor);   // Сама красная точка
 
             g.pose().popPose();
         }
-//        if (!ClientResearchState.isRead(node.id())) {
-//            float wave = (float) (Math.sin(System.currentTimeMillis() / 200.0) * 0.5 + 0.5);
-//            int alpha = (int)(100 + (155 * wave));
-//            g.fill(x + 8, y - 10, x + 10, y - 8, (alpha << 24) | 0xFF0000);
-//        }
 
-
-//        if (!ClientResearchState.isRead(node.id())) {
-//            float wave = (float) (Math.sin(System.currentTimeMillis() / 200.0) * 0.5 + 0.5);
-//            int alpha = (int) (100 + (155 * wave));
-//            // Рисуем красный огонек в углу (x+8, y-10)
-//            g.fill(x + 7, y - 11, x + 11, y - 7, 0xFF000000); // Обводка
-//            g.fill(x + 8, y - 10, x + 10, y - 8, (alpha << 24) | 0xFF0000); // Лампочка
-//        }
 
     }
 

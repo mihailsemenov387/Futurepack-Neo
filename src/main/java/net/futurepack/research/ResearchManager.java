@@ -50,18 +50,25 @@ public class ResearchManager {
 //                List.of(), List.of(), // Нет родителей, нет требований
 //                false));
 //
-//        // 2. СЛЕДУЮЩИЙ ШАГ (Будет LOCKED (серым), пока не изучишь "start")
-//        registerNode(new ResearchNode("neon", "space",
-//                Component.literal("Неон"), Component.literal("Теперь изучи это."),
-//                new ItemStack(Items.BEACON), 0, -60,
-//                List.of("start"),    // Линия от "start"
-//                List.of("start"),    // ТРЕБОВАНИЕ изученного "start"
-//                false));
-//
+        // 2. СЛЕДУЮЩИЙ ШАГ (Будет LOCKED (серым), пока не изучишь "start")
+        registerNode(new ResearchNode("ufo", "space",
+                Component.literal("Неон"),
+                new ItemStack(Items.BEACON), null, 30, -60,
+                List.of("start"),    // Линия от "start"
+                List.of("start", "neon"),    // ТРЕБОВАНИЕ изученного "start"
+                false, new TextPage("new locked")));
+
+        registerNode(new ResearchNode("ufo_II", "space",
+                Component.literal("Неон"),
+                new ItemStack(Items.BEACON),null, 50, -60,
+                List.of("ufo"),    // Линия от "start"
+                List.of("start", "neon", "ufo", "iron_tech"),    // ТРЕБОВАНИЕ изученного "start"
+                false, new TextPage("new locked")));
+
         // 3. СЕКРЕТ (Вообще не появится, пока не просканируешь блок железа)
         registerNode(new ResearchNode("iron_tech", "space",
                 Component.literal("Железо"),
-                new ItemStack(Items.IRON_INGOT), 60, -60,
+                new ItemStack(Items.IRON_INGOT),null, 60, -60,
                 List.of("start"),
                 List.of("start"),
                 true, new TextPage("secret"))); // Скрыто по умолчанию!
@@ -71,7 +78,7 @@ public class ResearchManager {
         registerNode(new ResearchNode(
                 "start", "space",
                 Component.literal("Основы"),
-                new ItemStack(Items.COMPASS), 0, 0,
+                new ItemStack(Items.COMPASS),null, 0, 0,
                 List.of(), List.of(), false,
 
                 new TextPage("Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.") // <-- Передали TextPage
@@ -81,7 +88,7 @@ public class ResearchManager {
         registerNode(new ResearchNode(
                 "neon", "space",
                 Component.literal("Неон"),
-                new ItemStack(Items.BEACON), 0, -60,
+                new ItemStack(Items.BEACON),null, 0, -60,
                 List.of("start"), List.of("start"), false,
 
                 new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png") // <-- Передали StudyPage
@@ -106,4 +113,5 @@ public class ResearchManager {
     public static ResearchTab getTab(String id) { return TABS.get(id); }
     public static ResearchNode getNode(String id) { return NODES.get(id); }
     public static List<ResearchNode> getNodesForTab(String tabId) { return NODES_BY_TAB.getOrDefault(tabId, List.of()); }
+    public static Set<String> getAllIds() {return NODES.keySet();}
 }

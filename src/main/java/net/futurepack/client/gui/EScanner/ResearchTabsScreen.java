@@ -194,33 +194,72 @@ public class ResearchTabsScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mx, double my, int btn) {
-        if (selectedEntry == null && btn == 0) {
-            int x = this.leftPos - 24;
-            int y = this.topPos + 30;
-            int i = 0;
-            for (ResearchTab tab : ResearchManager.getTabs()) {
-                int ty = y + i * 28;
-                int tx = (tab == currentTab) ? x + 4 : x;
-                if (mx >= tx && mx <= tx + 25 && my >= ty && my <= ty + 25) {
-                    this.currentTab = tab;
-                    return true;
-                }
-                i++;
-            }
-            if (treeComponent.mouseClicked(mx, my, btn, leftPos + DISP_X_OFF, topPos + DISP_Y_OFF, DISP_W, DISP_H)) {
-                return true;
-            }
+        // 1. ПРАВАЯ КНОПКА: Всегда работает как "Назад"
+        if (btn == 1) {
+            handleBackAction();
+            return true;
         }
-        if (selectedEntry != null && btn == 0) {
 
-            int x = this.leftPos + DISP_X_OFF;
-            int y = this.topPos + DISP_Y_OFF;
-            if (mx >= x && mx <= x + 40 && my >= y + DISP_H - 15) {
-                closeEntry();
+        // Дальше обрабатываем только ЛЕВУЮ КНОПКУ (0)
+        if (btn != 0) return super.mouseClicked(mx, my, btn);
+
+        // 2. ЕСЛИ ОТКРЫТА ЗАПИСЬ
+        if (selectedEntry != null) {
+            return handleEntryClick(mx, my, btn);
+        }
+
+        // 3. ЕСЛИ МЫ В ДЕРЕВЕ
+        return handleTreeClick(mx, my, btn);
+    }
+
+    // --- ВСПОМОГАТЕЛЬНЫЕ ОБРАБОТЧИКИ ---
+
+    private void handleBackAction() {
+        if (selectedEntry != null) {
+            closeEntry();
+        } else {
+            net.minecraft.client.Minecraft.getInstance().setScreen(new net.futurepack.client.gui.EScanner.EScannerMainScreen());
+        }
+    }
+
+    private boolean handleEntryClick(double mx, double my, int btn) {
+        int x = this.leftPos + DISP_X_OFF;
+        int y = this.topPos + DISP_Y_OFF;
+
+        // Клик по кнопке "Назад" в тексте
+        if (mx >= x && mx <= x + 45 && my >= y + DISP_H - 15) {
+            closeEntry();
+            return true;
+        }
+
+        // Позволяем работать кнопке "Изучить" (studyButton)
+        return super.mouseClicked(mx, my, btn);
+    }
+
+    private boolean handleTreeClick(double mx, double my, int btn) {
+        // Проверка вкладок
+        if (handleTabClick(mx, my)) return true;
+
+        // Проверка нод в дереве
+        return treeComponent.mouseClicked(mx, my, btn, leftPos + DISP_X_OFF, topPos + DISP_Y_OFF, DISP_W, DISP_H);
+    }
+
+    private boolean handleTabClick(double mx, double my) {
+        int x = this.leftPos - 24;
+        int y = this.topPos + 30;
+        int i = 0;
+
+        for (net.futurepack.research.ResearchTab tab : net.futurepack.research.ResearchManager.getTabs()) {
+            int ty = y + i * 28;
+            int tx = (tab.equals(currentTab)) ? x + 4 : x;
+
+            if (mx >= tx && mx <= tx + 25 && my >= ty && my <= ty + 25) {
+                this.currentTab = tab;
                 return true;
             }
+            i++;
         }
-        return super.mouseClicked(mx, my, btn);
+        return false;
     }
 
     @Override
