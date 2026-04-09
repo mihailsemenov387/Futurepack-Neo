@@ -33,7 +33,6 @@ public class FuturepackNeo {
         modEventBus.addListener(this::commonSetup);
         ResearchManager.init();
 
-        // Если добавляешь в конструктор главного класса:
         NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, event -> {
             ResearchCommand.register(event.getDispatcher());
         });
