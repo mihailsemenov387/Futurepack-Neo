@@ -1,10 +1,8 @@
 package net.futurepack.client.gui.EScanner;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.futurepack.network.RequestCompletePayload;
 import net.futurepack.network.RequestReadPayload;
 import net.futurepack.research.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,15 +12,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ResearchTabsScreen extends Screen {
+public class ResearchTabsScreen extends Screen implements IScannerScreen {
 
     private static final ResourceLocation FRAME_TEXTURE = ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_overlay.png");
     private static final ResourceLocation TAB_BG = ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/slot_bg.png");
+
     private static final int IMG_W = 256;
     private static final int IMG_H = 256;
 
@@ -34,69 +32,38 @@ public class ResearchTabsScreen extends Screen {
     private int leftPos, topPos;
     private ResearchTab currentTab;
     private final TreeRenderComponent treeComponent;
-    private  ResearchNode selectedEntry = null;
-    private EScannerMainScreen parent;
+    private final EScannerMainScreen parent;
+
+
     private int tabScrollOffset = 0;
+    private Button btnScrollUp;
+    private Button btnScrollDown;
+
 
     public ResearchTabsScreen(EScannerMainScreen mainScreen) {
         super(Component.literal("Research Overview"));
         this.treeComponent = new TreeRenderComponent(this);
         this.parent = mainScreen;
 
-
-//        var allTabs = ResearchManager.getTabs();
-//        if (!allTabs.isEmpty()) {
-//            this.currentTab = allTabs.iterator().next();
-//        }
-        this.currentTab = ResearchManager.getTabs().stream()
-                .filter(tab -> ClientResearchState.isTabVisible(tab.id()))
-                .findFirst()
-                .orElse(null);
+        // При открытии выбираем первую видимую вкладку
+        this.currentTab = getVisibleTabs().stream().findFirst().orElse(null);
     }
-
 
     public String getCurrentTabId() {
-        return this.currentTab.id();
-
-//        var tabs = ResearchManager.getTabs();
-//        TODO: fix if empty
-//        if (tabs.isEmpty()) return "space";
-
-//        return tabs.iterator().next().id();
-
+        return this.currentTab != null ? this.currentTab.id() : "";
     }
 
-//    public void openEntry(ResearchNode node) {
-//        this.selectedEntry = node;
-//        PacketDistributor.sendToServer(new RequestReadPayload(node.id()));
-//        if (node.page() != null) {
-//            node.page().init(this, node, this.leftPos + DISP_X_OFF, this.topPos + DISP_Y_OFF, DISP_W, DISP_H);
-//        }
-//    }
-
+    // Вспомогательный метод для получения ТОЛЬКО видимых вкладок
+    private List<ResearchTab> getVisibleTabs() {
+        return ResearchManager.getTabs().stream()
+                .filter(tab -> ClientResearchState.isTabVisible(tab.id()))
+                .toList();
+    }
 
     public void openEntry(ResearchNode node) {
-        // 1. Помечаем как прочитанное (пакет серверу)
         PacketDistributor.sendToServer(new RequestReadPayload(node.id()));
-
-        // 2. Открываем ОТДЕЛЬНЫЙ экран чтения
-        // Передаем ноду и текущий экран (ResearchTabsScreen), чтобы вернуться именно в дерево!
         this.minecraft.setScreen(new EScannerReadScreen(node, this));
     }
-//    private void closeEntry() {
-//        if (this.selectedEntry != null && this.selectedEntry.page() != null) {
-//            this.selectedEntry.page().onClose(this);
-//        }
-//        this.selectedEntry = null; // Теперь removed() ничего не сделает, так как тут null
-//    }
-
-//    @Override
-//    public void removed() {
-//        if (selectedEntry != null && selectedEntry.page() != null) {
-//            selectedEntry.page().onClose(this);
-//        }
-//        super.removed();
-//    }
 
     @Override
     protected void init() {
@@ -104,312 +71,207 @@ public class ResearchTabsScreen extends Screen {
         this.leftPos = (this.width - IMG_W) / 2;
         this.topPos = (this.height - IMG_H) / 2;
 
-//        if (selectedEntry != null && selectedEntry.page() != null) {
-//            // Проверяем, что screen (this) не null
-//            selectedEntry.page().init(this, selectedEntry, this.leftPos + DISP_X_OFF, this.topPos + DISP_Y_OFF, DISP_W, DISP_H);
-//        }
-
-        this.addRenderableWidget(Button.builder(Component.literal("▲"), b -> {
+        this.btnScrollUp = Button.builder(Component.literal("▲"), b -> {
             if (tabScrollOffset > 0) tabScrollOffset--;
-        }).bounds(this.leftPos - 24, this.topPos + 10, 24, 15).build());
+        }).bounds(this.leftPos - 24, this.topPos + 10, 24, 15).build();
 
         // Кнопка ВНИЗ
-        this.addRenderableWidget(Button.builder(Component.literal("▼"), b -> {
-            if (tabScrollOffset < ResearchManager.getTabs().size() - 7) tabScrollOffset++;
-        }).bounds(this.leftPos - 24, this.topPos + 225, 24, 15).build());
+        this.btnScrollDown = Button.builder(Component.literal("▼"), b -> {
+            int maxOffset = Math.max(0, getVisibleTabs().size() - 7);
+            if (tabScrollOffset < maxOffset) tabScrollOffset++;
+        }).bounds(this.leftPos - 24, this.topPos + 225, 24, 15).build();
 
+        this.addRenderableWidget(this.btnScrollUp);
+        this.addRenderableWidget(this.btnScrollDown);
     }
 
-//    public <T extends net.minecraft.client.gui.components.events.GuiEventListener & net.minecraft.client.gui.components.Renderable & net.minecraft.client.gui.narration.NarratableEntry> T addWidgetPublic(T widget) {
-//        return this.addRenderableWidget(widget);
-//    }
+    @Override
+    public <T extends net.minecraft.client.gui.components.events.GuiEventListener & net.minecraft.client.gui.components.Renderable & net.minecraft.client.gui.narration.NarratableEntry> T addWidgetPublic(T widget) {
+        return this.addRenderableWidget(widget);
+    }
 
-//    public void removeWidgetPublic(net.minecraft.client.gui.components.events.GuiEventListener widget) {
-//        this.removeWidget(widget);
-//    }
-
+    @Override
+    public void removeWidgetPublic(net.minecraft.client.gui.components.events.GuiEventListener widget) {
+        this.removeWidget(widget);
+    }
 
     @Override
     public void render(@NotNull GuiGraphics g, int mX, int mY, float pT) {
-        // 1. Фон
         g.fill(0, 0, this.width, this.height, 0x99000000);
 
-        // 2. Рассчитываем позиции СТРОГО целыми числами (Фикс черного пикселя)
         int iLeft = this.leftPos;
         int iTop = this.topPos;
 
-        // 3. Рисуем дерево (Оно теперь само ограничивает скролл)
+        // Рендер дерева
         int x = iLeft + DISP_X_OFF;
         int y = iTop + DISP_Y_OFF;
 
-        // Важно: Scissor и Fill должны иметь одинаковые координаты
         g.enableScissor(x, y, x + DISP_W, y + DISP_H);
-        if (selectedEntry == null) {
+        if (currentTab != null) {
             treeComponent.render(g, x, y, DISP_W, DISP_H, mX, mY, currentTab);
-        } else {
-            renderEntryPage(g, x, y, mX, mY, pT);
         }
         g.disableScissor();
 
-        // 4. Рисуем ОВЕРЛЕЙ ПОВЕРХ дерева
+        // Оверлей (Рамка)
         RenderSystem.enableBlend();
         g.blit(FRAME_TEXTURE, iLeft, iTop, 0, 0, 256, 256, 256, 256);
 
-        // 5. ТУЛТИПЫ (Рисуем в самом конце, вне Scissor и Pose дерева)
-        if (selectedEntry == null && treeComponent.getHoveredNode() != null) {
-            var node = treeComponent.getHoveredNode();
-            var status = ClientResearchState.getStatus(node);
-            // Используем ванильный метод отрисовки тултипа
-           treeComponent.drawTooltip(g, mX, mY);
-//            g.renderTooltip(this.font, List.of(
-//                    node.title().getVisualOrderText(),
-//                    Component.literal("Статус: " + status).withStyle(net.minecraft.ChatFormatting.GRAY).getVisualOrderText()
-//            ), mX, mY);
-        }
+        // Тултип ноды (вне Scissor)
+        treeComponent.drawTooltip(g, mX, mY);
 
+        RenderButtons();
         renderTabButtons(g);
         renderTabTooltips(g, mX, mY);
         super.render(g, mX, mY, pT);
     }
 
-    private List<ResearchTab> getVisibleTabsList() {
-        return ResearchManager.getTabs().stream()
-                .filter(tab -> ClientResearchState.isTabVisible(tab.id()))
-                .toList();
+    private void RenderButtons(){
+        int visibleTabsCount = getVisibleTabs().size();
+        boolean needsScroll = visibleTabsCount > 7;
+
+        this.btnScrollUp.visible = needsScroll;
+        this.btnScrollDown.visible = needsScroll;
+
+        if (needsScroll) {
+            int maxOffset = Math.max(0, visibleTabsCount - 7);
+            this.btnScrollUp.active = (tabScrollOffset > 0);
+            this.btnScrollDown.active = (tabScrollOffset < maxOffset);
+        }
+
     }
-//    private void renderTabButtons(GuiGraphics g) {
-//        int x = this.leftPos - 24; // Пододвинул ближе
-//        int y = this.topPos + 30;
-//        int i = 0;
-//        for (ResearchTab tab : ResearchManager.getTabs()) {
-//            if (!ClientResearchState.isTabVisible(tab.id())) continue;
-//            boolean active = (tab == currentTab);
-//            int ty = y + i * 28;
-//            int tx = active ? x + 4 : x;
-//
-//            int color = active ? 0xFF00E5FF : 0xFF333333;
-//            g.fill(tx, ty, tx + 25, ty + 25, 0xFF000000);
-//            g.fill(tx + 1, ty + 1, tx + 24, ty + 24, color);
-//            g.renderItem(tab.icon(), tx + 4, ty + 4);
-//            i++;
-//        }
-//    }
 
-//    private void renderTabButtons(GuiGraphics g) {
-//        int x = this.leftPos - 24; // Позиция по X (чуть левее корпуса)
-//        int y = this.topPos + 30;  // Начальная позиция по Y
-//        int i = 0;
-//
-//        for (ResearchTab tab : ResearchManager.getTabs()) {
-//            if (!ClientResearchState.isTabVisible(tab.id())) continue;
-//
-//            boolean active = (tab.equals(currentTab));
-//            int ty = y + i * 28;
-//            int tx = active ? x + 4 : x; // Активная вкладка "выезжает" вперед
-//
-//            if (active) {
-//                // Активная вкладка - яркая и золотая
-//                g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-//            } else {
-//                // Неактивная вкладка - приглушенная (серая)
-//                g.setColor(0.8f, 0.8f, 0.8f, 1.0f);
-//            }
-//
-//            // Рисуем рамку slot_bg (размер 26x26)
-//            // Параметры: текстура, x, y, u, v, ширина, высота, ширина_файла, высота_файла
-//            // Убедись, что последние два числа соответствуют реальному размеру твоего PNG (например 18, 18)
-//            g.blit(TAB_BG, tx, ty, 0, 0, 26, 26, 26, 26);
-//
-//            g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-//
-//            g.renderItem(tab.icon(), tx + 5, ty + 5);
-//
-//            i++;
-//        }
-//    }
-
+    // Одинаковая логика скролла для кнопок, кликов и тултипов!
     private void renderTabButtons(GuiGraphics g) {
         int x = this.leftPos - 24;
         int y = this.topPos + 30;
 
-        List<ResearchTab> visibleTabs = getVisibleTabsList();
+        List<ResearchTab> visibleTabs = getVisibleTabs();
 
-        int displayedCount = 0;
-        for (int i = 0; i < 7; i++) { // Рисуем максимум 7 штук
-            int actualIndex = i + tabScrollOffset;
-            if (actualIndex >= visibleTabs.size()) break;
+        // Рисуем не больше 7 штук
+        for (int i = 0; i < 7; i++) {
+            int index = i + tabScrollOffset;
+            if (index >= visibleTabs.size()) break;
 
-            ResearchTab tab = visibleTabs.get(actualIndex);
-            boolean active = (tab.id().equals(currentTab.id()));
+            ResearchTab tab = visibleTabs.get(index);
+            boolean active = currentTab != null && tab.id().equals(currentTab.id());
 
-            int ty = y + displayedCount * 26; // Шаг 26
+            int ty = y + i * 26; // Индекс экрана (i), а не индекс коллекции
             int tx = active ? x + 3 : x;
 
             g.setColor(active ? 1.0f : 0.7f, active ? 1.0f : 0.7f, active ? 1.0f : 0.7f, 1.0f);
-            g.blit(TAB_BG, tx, ty, 0, 0, 24, 24, 24, 24); // Рисуем 24x24 (твой размер)
-
+            g.blit(TAB_BG, tx, ty, 0, 0, 24, 24, 24, 24);
             g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-            g.renderItem(tab.icon(), tx + 4, ty + 4);
-            displayedCount++;
+            if(tab.icon() != null) {
+                g.renderItem(tab.icon(), tx + 4, ty + 4);
+            }
+            else{
+                g.blit(tab.custom_icon(), tx, ty, 0, 0, 24, 24, 24, 24);
+
+            }
+            if (ClientResearchState.hasUnreadInTab(tab.id())) {
+                renderTabNotification(g, tx + 18, ty + 2);
+            }
+
         }
     }
-
-
-
 
     private void renderTabTooltips(GuiGraphics g, int mx, int my) {
         int x = this.leftPos - 24;
         int y = this.topPos + 30;
 
-        List<ResearchTab> allTabs = new ArrayList<>(ResearchManager.getTabs());
+        List<ResearchTab> visibleTabs = getVisibleTabs();
 
-        int displayedCount = 0;
         for (int i = 0; i < 7; i++) {
-            int actualIndex = i + tabScrollOffset;
-            if (actualIndex >= allTabs.size()) break;
+            int index = i + tabScrollOffset;
+            if (index >= visibleTabs.size()) break;
 
-            ResearchTab tab = allTabs.get(actualIndex);
-            if (!ClientResearchState.isTabVisible(tab.id())) continue;
+            ResearchTab tab = visibleTabs.get(index);
+            boolean active = currentTab != null && tab.id().equals(currentTab.id());
 
-            int ty = y + displayedCount * 26;
-            int tx = (tab.equals(currentTab)) ? x + 4 : x;
+            int ty = y + i * 26;
+            int tx = active ? x + 3 : x;
 
-            if (mx >= tx && mx <= tx + 26 && my >= ty && my <= ty + 26) {
+            if (mx >= tx && mx <= tx + 24 && my >= ty && my <= ty + 24) {
                 g.renderTooltip(this.font, tab.title(), mx, my);
             }
-            displayedCount++;
         }
     }
 
-//    private void renderEntryPage(GuiGraphics g, int x, int y, int mX, int mY, float pT)  {
-//        g.drawCenteredString(this.font, selectedEntry.title(), x + DISP_W / 2, y + 10, 0x00FFCC);
-//
-//        // ЗАМЕНИ ВЕСЬ ТЕКСТ НА ЭТУ СТРОКУ:
-//        if (selectedEntry.page() != null) {
-//            selectedEntry.page().render(g, mX, mY, pT);
-//        }
-//
-//        g.drawString(this.font, "< Назад", x + 5, y + DISP_H - 12, 0x55FFFF);
-//
-//
-//    }
+    private void renderTabNotification(GuiGraphics g, int x, int y) {
+        float wave = (float) (Math.sin(System.currentTimeMillis() / 150.0) * 0.5 + 0.5);
+        int alpha = (int)(160 + (95 * wave));
+        int redColor = (alpha << 24) | 0xFF0000;
 
-    private void renderEntryPage(GuiGraphics g, int x, int y, int mX, int mY, float pT) {
-        // Спрашиваем заголовок у СТРАНИЦЫ, а не у ноды напрямую
+        g.pose().pushPose();
+        g.pose().translate(0, 0, 300); // Чтобы диод был поверх иконки вкладки
 
-        if (selectedEntry.page() != null) {
-            selectedEntry.page().render(g, mX, mY, pT);
-        }
-        g.drawString(this.font, "< Назад", x + 5, y + DISP_H - 12, 0x55FFFF);
+        // Рисуем маленькую лампочку (4x4 пикселя) с черной обводкой
+        g.fill(x, y, x + 5, y + 5, 0xFF000000);
+        g.fill(x + 1, y + 1, x + 4, y + 4, redColor);
+
+        g.pose().popPose();
     }
-
 
     @Override
     public boolean mouseClicked(double mx, double my, int btn) {
-        // 1. ПРАВАЯ КНОПКА: Всегда работает как "Назад"
-
-
-
+        // ПКМ - Выход в главное меню
         if (btn == 1) {
-            handleBackAction();
+            net.minecraft.client.Minecraft.getInstance().setScreen(this.parent);
             return true;
         }
 
+        if (btn == 0) {
+            // Проверка клика по табам (ТОЧНАЯ копия логики отрисовки)
+            int x = this.leftPos - 24;
+            int y = this.topPos + 30;
 
+            List<ResearchTab> visibleTabs = getVisibleTabs();
 
-        // Дальше обрабатываем только ЛЕВУЮ КНОПКУ (0)
-        if (btn != 0) return super.mouseClicked(mx, my, btn);
+            for (int i = 0; i < 7; i++) {
+                int index = i + tabScrollOffset;
+                if (index >= visibleTabs.size()) break;
 
-//        // 2. ЕСЛИ ОТКРЫТА ЗАПИСЬ
-//        if (selectedEntry != null) {
-//            return handleEntryClick(mx, my, btn);
-//        }
+                ResearchTab tab = visibleTabs.get(index);
+                boolean active = currentTab != null && tab.id().equals(currentTab.id());
 
-        // 3. ЕСЛИ МЫ В ДЕРЕВЕ
-        return handleTreeClick(mx, my, btn);
-    }
+                int ty = y + i * 26;
+                int tx = active ? x + 3 : x;
 
-
-//    private void handleBackAction() {
-//        if (selectedEntry != null) {
-//            closeEntry();
-//        } else {
-//            net.minecraft.client.Minecraft.getInstance().setScreen(this.parent);
-//        }
-//    }
-
-    private void handleBackAction() {
-        net.minecraft.client.Minecraft.getInstance().setScreen(this.parent);
-    }
-
-//    private boolean handleEntryClick(double mx, double my, int btn) {
-//        int x = this.leftPos + DISP_X_OFF;
-//        int y = this.topPos + DISP_Y_OFF;
-//
-//        // Клик по кнопке "Назад" в тексте
-//        if (mx >= x && mx <= x + 45 && my >= y + DISP_H - 15) {
-//            closeEntry();
-//            return true;
-//        }
-//
-//        // Позволяем работать кнопке "Изучить" (studyButton)
-//        return super.mouseClicked(mx, my, btn);
-//    }
-
-    private boolean handleTreeClick(double mx, double my, int btn) {
-        // Проверка вкладок
-        if (handleTabClick(mx, my)) return true;
-
-        // Проверка нод в дереве
-        return treeComponent.mouseClicked(mx, my, btn, leftPos + DISP_X_OFF, topPos + DISP_Y_OFF, DISP_W, DISP_H);
-    }
-
-    private boolean handleTabClick(double mx, double my) {
-        int x = this.leftPos - 24;
-        int y = this.topPos + 30;
-
-        List<ResearchTab> visibleTabs = getVisibleTabsList();
-
-        int displayedCount = 0;
-        for (int i = 0; i < 7; i++) {
-            int actualIndex = i + tabScrollOffset;
-            if (actualIndex >= visibleTabs.size()) break;
-
-            ResearchTab tab = visibleTabs.get(actualIndex);
-
-            int ty = y + displayedCount * 26; // Шаг ДОЛЖЕН БЫТЬ 26
-            // Зона клика должна учитывать смещение активной вкладки
-            int tx = (tab.id().equals(currentTab.id())) ? x + 3 : x;
-
-            // Проверяем попадание в квадрат 24x24 (размер спрайта)
-            if (mx >= tx && mx <= tx + 24 && my >= ty && my <= ty + 24) {
-                if (!this.currentTab.id().equals(tab.id())) {
-                    this.currentTab = tab;
-                    // Можно добавить звук клика для сочности
-                    net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
-                            net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
-                                    net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, 1.0F)
-                    );
+                if (mx >= tx && mx <= tx + 24 && my >= ty && my <= ty + 24) {
+                    if (!active) {
+                        this.currentTab = tab;
+                    }
+                    return true;
                 }
+            }
+
+            // Клик по дереву
+            if (treeComponent.mouseClicked(mx, my, btn, leftPos + DISP_X_OFF, topPos + DISP_Y_OFF, DISP_W, DISP_H)) {
                 return true;
             }
-            displayedCount++;
         }
-        return false;
+        return super.mouseClicked(mx, my, btn);
+    }
+
+    public Map<String, ResearchNode> getResearches() {
+        Map<String, ResearchNode> tabNodes = new HashMap<>();
+        if (currentTab != null) {
+            for (ResearchNode node : ResearchManager.getNodesForTab(currentTab.id())) {
+                tabNodes.put(node.id(), node);
+            }
+        }
+        return tabNodes;
     }
 
     @Override
     public boolean mouseDragged(double mx, double my, int btn, double dx, double dy) {
-        if (selectedEntry == null) return treeComponent.mouseDragged(dx, dy, btn);
+        if (treeComponent.mouseDragged(dx, dy, btn)) return true;
         return super.mouseDragged(mx, my, btn, dx, dy);
     }
 
     @Override
     public boolean mouseScrolled(double mx, double my, double sx, double sy) {
-        if (selectedEntry == null) {
-            treeComponent.mouseScrolled(sy);
-            return true;
-        }
+        if (treeComponent.mouseScrolled(sy)) return true;
         return super.mouseScrolled(mx, my, sx, sy);
     }
 

@@ -50,11 +50,16 @@ public class ClientResearchState {
     public static boolean isTabVisible(String tabId) {
         // Вкладка видна, если в ней есть ХОТЯ БЫ ОДНА нода, статус которой НЕ HIDDEN
         // (То есть она либо LOCKED, либо AVAILABLE, либо COMPLETED)
-        return true;
 
+        return ResearchManager.getNodesForTab(tabId).stream()
+                .anyMatch(node -> (getStatus(node) != ResearchNode.Status.HIDDEN && getStatus(node) != ResearchNode.Status.LOCKED) );
+    }
 
-//        return ResearchManager.getNodesForTab(tabId).stream()
-//                .anyMatch(node -> (getStatus(node) != ResearchNode.Status.HIDDEN && getStatus(node) != ResearchNode.Status.LOCKED) );
+    public static boolean hasUnreadInTab(String tabId) {
+        return ResearchManager.getNodesForTab(tabId).stream().anyMatch(node -> {
+            // Ищем ноду, которая ДОСТУПНА (Available), но НЕ ПРОЧИТАНА
+            return getStatus(node) == ResearchNode.Status.AVAILABLE && !isRead(node.id());
+        });
     }
 
 }

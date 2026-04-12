@@ -287,7 +287,8 @@ public class TreeRenderComponent {
         return false;
     }
 
-    public void mouseScrolled(double amount) {
+    public boolean mouseScrolled(double amount) {
         this.zoom = Mth.clamp(this.zoom + (float) amount * 0.1f, 0.5f, 2.0f);
+        return true;
     }
 }

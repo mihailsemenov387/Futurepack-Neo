@@ -26,6 +26,24 @@ public class EScannerMainScreen extends Screen implements IScannerScreen {
         this.research_screen = new ResearchTabsScreen(this);
     }
 
+//    @Override
+//    protected void init() {
+//        super.init();
+//        this.leftPos = (this.width - IMG_W) / 2;
+//        this.topPos = (this.height - IMG_H) / 2;
+//
+//        if (readingEntry == null) {
+//            initMainMenu();
+//        } else {
+//            // Если мы вернулись в режим чтения, открываем читалку СРАЗУ
+//            // Ноды уже прогружены, поэтому null не будет
+//            this.minecraft.setScreen(new EScannerReadScreen(readingEntry, this));
+//            this.readingEntry = null; // Сбрасываем, чтобы при возврате попасть в меню
+//        }
+//    }
+
+
+
     @Override
     protected void init() {
         super.init();
