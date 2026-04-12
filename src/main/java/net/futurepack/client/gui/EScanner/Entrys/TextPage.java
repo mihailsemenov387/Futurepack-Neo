@@ -1,6 +1,6 @@
 package net.futurepack.client.gui.EScanner.Entrys;
 
-import net.futurepack.client.gui.EScanner.ResearchTabsScreen;
+import net.futurepack.client.gui.EScanner.IScannerScreen;
 import net.futurepack.research.ClientResearchState;
 import net.futurepack.research.ResearchNode;
 import net.futurepack.network.RequestCompletePayload;
@@ -17,16 +17,17 @@ public class TextPage extends AbstractResearchPage {
     }
 
     @Override
-    public void render(GuiGraphics g , int mouseX, int mouseY, float partialTick) {
-        // Рисуем заголовок белым цветом
-        renderTitle(g, this.node.title(), 0xFFFFFF);
-
-        g.drawWordWrap(Minecraft.getInstance().font, content, x + 10, y + 30, w - 20, 0x0000FF);
+    protected int getContentHeight() {
+        // Считаем высоту текста заранее
+        return Minecraft.getInstance().font.split(content, w - 20).size() * 9 + 15;
     }
 
     @Override
-    public void onClose(ResearchTabsScreen screen) {
-        // УМНАЯ ПРОВЕРКА: завершаем только если нода была готова к изучению
+    protected void renderPageContent(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        g.drawWordWrap(Minecraft.getInstance().font, content, x + 10, y + 30, w - 20, 0xCCCCCC);
+    }
+    @Override
+    public void onClose(IScannerScreen screen) {
         if (ClientResearchState.getStatus(this.node) == ResearchNode.Status.AVAILABLE) {
             PacketDistributor.sendToServer(new RequestCompletePayload(this.node.id()));
         }

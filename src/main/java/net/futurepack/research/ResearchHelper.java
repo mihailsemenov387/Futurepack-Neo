@@ -8,6 +8,12 @@ import java.util.Set;
 
 public class ResearchHelper {
 
+    private static String lastReadId = null;
+
+    public static void setLastReadId(String id) { lastReadId = id; }
+    public static String getLastReadId() { return lastReadId; }
+
+
     // Вызывать на сервере, когда нужно что-то изучить/открыть
     public static void updateProgress(Player player, String id, ProgressType type) {
         if (!(player instanceof ServerPlayer serverPlayer)) return;

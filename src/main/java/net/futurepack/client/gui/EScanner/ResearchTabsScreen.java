@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +34,14 @@ public class ResearchTabsScreen extends Screen {
     private int leftPos, topPos;
     private ResearchTab currentTab;
     private final TreeRenderComponent treeComponent;
-    private ResearchNode selectedEntry = null;
-
+    private  ResearchNode selectedEntry = null;
+    private EScannerMainScreen parent;
+    private int tabScrollOffset = 0;
 
     public ResearchTabsScreen(EScannerMainScreen mainScreen) {
         super(Component.literal("Research Overview"));
         this.treeComponent = new TreeRenderComponent(this);
+        this.parent = mainScreen;
 
 
 //        var allTabs = ResearchManager.getTabs();
@@ -63,29 +66,37 @@ public class ResearchTabsScreen extends Screen {
 
     }
 
+//    public void openEntry(ResearchNode node) {
+//        this.selectedEntry = node;
+//        PacketDistributor.sendToServer(new RequestReadPayload(node.id()));
+//        if (node.page() != null) {
+//            node.page().init(this, node, this.leftPos + DISP_X_OFF, this.topPos + DISP_Y_OFF, DISP_W, DISP_H);
+//        }
+//    }
+
+
     public void openEntry(ResearchNode node) {
-        this.selectedEntry = node;
+        // 1. Помечаем как прочитанное (пакет серверу)
         PacketDistributor.sendToServer(new RequestReadPayload(node.id()));
-        if (node.page() != null) {
-            node.page().init(this, node, this.leftPos + DISP_X_OFF, this.topPos + DISP_Y_OFF, DISP_W, DISP_H);
-        }
-    }
 
-
-    private void closeEntry() {
-        if (this.selectedEntry != null && this.selectedEntry.page() != null) {
-            this.selectedEntry.page().onClose(this);
-        }
-        this.selectedEntry = null; // Теперь removed() ничего не сделает, так как тут null
+        // 2. Открываем ОТДЕЛЬНЫЙ экран чтения
+        // Передаем ноду и текущий экран (ResearchTabsScreen), чтобы вернуться именно в дерево!
+        this.minecraft.setScreen(new EScannerReadScreen(node, this));
     }
+//    private void closeEntry() {
+//        if (this.selectedEntry != null && this.selectedEntry.page() != null) {
+//            this.selectedEntry.page().onClose(this);
+//        }
+//        this.selectedEntry = null; // Теперь removed() ничего не сделает, так как тут null
+//    }
 
-    @Override
-    public void removed() {
-        if (selectedEntry != null && selectedEntry.page() != null) {
-            selectedEntry.page().onClose(this);
-        }
-        super.removed();
-    }
+//    @Override
+//    public void removed() {
+//        if (selectedEntry != null && selectedEntry.page() != null) {
+//            selectedEntry.page().onClose(this);
+//        }
+//        super.removed();
+//    }
 
     @Override
     protected void init() {
@@ -93,19 +104,29 @@ public class ResearchTabsScreen extends Screen {
         this.leftPos = (this.width - IMG_W) / 2;
         this.topPos = (this.height - IMG_H) / 2;
 
-        if (selectedEntry != null && selectedEntry.page() != null) {
-            // Проверяем, что screen (this) не null
-            selectedEntry.page().init(this, selectedEntry, this.leftPos + DISP_X_OFF, this.topPos + DISP_Y_OFF, DISP_W, DISP_H);
-        }
+//        if (selectedEntry != null && selectedEntry.page() != null) {
+//            // Проверяем, что screen (this) не null
+//            selectedEntry.page().init(this, selectedEntry, this.leftPos + DISP_X_OFF, this.topPos + DISP_Y_OFF, DISP_W, DISP_H);
+//        }
+
+        this.addRenderableWidget(Button.builder(Component.literal("▲"), b -> {
+            if (tabScrollOffset > 0) tabScrollOffset--;
+        }).bounds(this.leftPos - 24, this.topPos + 10, 24, 15).build());
+
+        // Кнопка ВНИЗ
+        this.addRenderableWidget(Button.builder(Component.literal("▼"), b -> {
+            if (tabScrollOffset < ResearchManager.getTabs().size() - 7) tabScrollOffset++;
+        }).bounds(this.leftPos - 24, this.topPos + 225, 24, 15).build());
+
     }
 
-    public <T extends net.minecraft.client.gui.components.events.GuiEventListener & net.minecraft.client.gui.components.Renderable & net.minecraft.client.gui.narration.NarratableEntry> T addWidgetPublic(T widget) {
-        return this.addRenderableWidget(widget);
-    }
+//    public <T extends net.minecraft.client.gui.components.events.GuiEventListener & net.minecraft.client.gui.components.Renderable & net.minecraft.client.gui.narration.NarratableEntry> T addWidgetPublic(T widget) {
+//        return this.addRenderableWidget(widget);
+//    }
 
-    public void removeWidgetPublic(net.minecraft.client.gui.components.events.GuiEventListener widget) {
-        this.removeWidget(widget);
-    }
+//    public void removeWidgetPublic(net.minecraft.client.gui.components.events.GuiEventListener widget) {
+//        this.removeWidget(widget);
+//    }
 
 
     @Override
@@ -150,6 +171,12 @@ public class ResearchTabsScreen extends Screen {
         renderTabTooltips(g, mX, mY);
         super.render(g, mX, mY, pT);
     }
+
+    private List<ResearchTab> getVisibleTabsList() {
+        return ResearchManager.getTabs().stream()
+                .filter(tab -> ClientResearchState.isTabVisible(tab.id()))
+                .toList();
+    }
 //    private void renderTabButtons(GuiGraphics g) {
 //        int x = this.leftPos - 24; // Пододвинул ближе
 //        int y = this.topPos + 30;
@@ -168,55 +195,89 @@ public class ResearchTabsScreen extends Screen {
 //        }
 //    }
 
+//    private void renderTabButtons(GuiGraphics g) {
+//        int x = this.leftPos - 24; // Позиция по X (чуть левее корпуса)
+//        int y = this.topPos + 30;  // Начальная позиция по Y
+//        int i = 0;
+//
+//        for (ResearchTab tab : ResearchManager.getTabs()) {
+//            if (!ClientResearchState.isTabVisible(tab.id())) continue;
+//
+//            boolean active = (tab.equals(currentTab));
+//            int ty = y + i * 28;
+//            int tx = active ? x + 4 : x; // Активная вкладка "выезжает" вперед
+//
+//            if (active) {
+//                // Активная вкладка - яркая и золотая
+//                g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+//            } else {
+//                // Неактивная вкладка - приглушенная (серая)
+//                g.setColor(0.8f, 0.8f, 0.8f, 1.0f);
+//            }
+//
+//            // Рисуем рамку slot_bg (размер 26x26)
+//            // Параметры: текстура, x, y, u, v, ширина, высота, ширина_файла, высота_файла
+//            // Убедись, что последние два числа соответствуют реальному размеру твоего PNG (например 18, 18)
+//            g.blit(TAB_BG, tx, ty, 0, 0, 26, 26, 26, 26);
+//
+//            g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+//
+//            g.renderItem(tab.icon(), tx + 5, ty + 5);
+//
+//            i++;
+//        }
+//    }
+
     private void renderTabButtons(GuiGraphics g) {
-        int x = this.leftPos - 24; // Позиция по X (чуть левее корпуса)
-        int y = this.topPos + 30;  // Начальная позиция по Y
-        int i = 0;
+        int x = this.leftPos - 24;
+        int y = this.topPos + 30;
 
-        for (ResearchTab tab : ResearchManager.getTabs()) {
-            if (!ClientResearchState.isTabVisible(tab.id())) continue;
+        List<ResearchTab> visibleTabs = getVisibleTabsList();
 
-            boolean active = (tab.equals(currentTab));
-            int ty = y + i * 28;
-            int tx = active ? x + 4 : x; // Активная вкладка "выезжает" вперед
+        int displayedCount = 0;
+        for (int i = 0; i < 7; i++) { // Рисуем максимум 7 штук
+            int actualIndex = i + tabScrollOffset;
+            if (actualIndex >= visibleTabs.size()) break;
 
-            if (active) {
-                // Активная вкладка - яркая и золотая
-                g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-            } else {
-                // Неактивная вкладка - приглушенная (серая)
-                g.setColor(0.8f, 0.8f, 0.8f, 1.0f);
-            }
+            ResearchTab tab = visibleTabs.get(actualIndex);
+            boolean active = (tab.id().equals(currentTab.id()));
 
-            // Рисуем рамку slot_bg (размер 26x26)
-            // Параметры: текстура, x, y, u, v, ширина, высота, ширина_файла, высота_файла
-            // Убедись, что последние два числа соответствуют реальному размеру твоего PNG (например 18, 18)
-            g.blit(TAB_BG, tx, ty, 0, 0, 26, 26, 26, 26);
+            int ty = y + displayedCount * 26; // Шаг 26
+            int tx = active ? x + 3 : x;
+
+            g.setColor(active ? 1.0f : 0.7f, active ? 1.0f : 0.7f, active ? 1.0f : 0.7f, 1.0f);
+            g.blit(TAB_BG, tx, ty, 0, 0, 24, 24, 24, 24); // Рисуем 24x24 (твой размер)
 
             g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-            g.renderItem(tab.icon(), tx + 5, ty + 5);
-
-            i++;
+            g.renderItem(tab.icon(), tx + 4, ty + 4);
+            displayedCount++;
         }
     }
+
 
 
 
     private void renderTabTooltips(GuiGraphics g, int mx, int my) {
         int x = this.leftPos - 24;
         int y = this.topPos + 30;
-        int i = 0;
-        for (ResearchTab tab : ResearchManager.getTabs()) {
-            if (!ClientResearchState.isTabVisible(tab.id())) continue;
-            boolean active = (tab == currentTab);
-            int ty = y + i * 28;
-            int tx = active ? x + 4 : x;
 
-            if (mx >= tx && mx <= tx + 25 && my >= ty && my <= ty + 25) {
+        List<ResearchTab> allTabs = new ArrayList<>(ResearchManager.getTabs());
+
+        int displayedCount = 0;
+        for (int i = 0; i < 7; i++) {
+            int actualIndex = i + tabScrollOffset;
+            if (actualIndex >= allTabs.size()) break;
+
+            ResearchTab tab = allTabs.get(actualIndex);
+            if (!ClientResearchState.isTabVisible(tab.id())) continue;
+
+            int ty = y + displayedCount * 26;
+            int tx = (tab.equals(currentTab)) ? x + 4 : x;
+
+            if (mx >= tx && mx <= tx + 26 && my >= ty && my <= ty + 26) {
                 g.renderTooltip(this.font, tab.title(), mx, my);
             }
-            i++;
+            displayedCount++;
         }
     }
 
@@ -259,38 +320,41 @@ public class ResearchTabsScreen extends Screen {
         // Дальше обрабатываем только ЛЕВУЮ КНОПКУ (0)
         if (btn != 0) return super.mouseClicked(mx, my, btn);
 
-        // 2. ЕСЛИ ОТКРЫТА ЗАПИСЬ
-        if (selectedEntry != null) {
-            return handleEntryClick(mx, my, btn);
-        }
+//        // 2. ЕСЛИ ОТКРЫТА ЗАПИСЬ
+//        if (selectedEntry != null) {
+//            return handleEntryClick(mx, my, btn);
+//        }
 
         // 3. ЕСЛИ МЫ В ДЕРЕВЕ
         return handleTreeClick(mx, my, btn);
     }
 
-    // --- ВСПОМОГАТЕЛЬНЫЕ ОБРАБОТЧИКИ ---
+
+//    private void handleBackAction() {
+//        if (selectedEntry != null) {
+//            closeEntry();
+//        } else {
+//            net.minecraft.client.Minecraft.getInstance().setScreen(this.parent);
+//        }
+//    }
 
     private void handleBackAction() {
-        if (selectedEntry != null) {
-            closeEntry();
-        } else {
-            net.minecraft.client.Minecraft.getInstance().setScreen(new net.futurepack.client.gui.EScanner.EScannerMainScreen());
-        }
+        net.minecraft.client.Minecraft.getInstance().setScreen(this.parent);
     }
 
-    private boolean handleEntryClick(double mx, double my, int btn) {
-        int x = this.leftPos + DISP_X_OFF;
-        int y = this.topPos + DISP_Y_OFF;
-
-        // Клик по кнопке "Назад" в тексте
-        if (mx >= x && mx <= x + 45 && my >= y + DISP_H - 15) {
-            closeEntry();
-            return true;
-        }
-
-        // Позволяем работать кнопке "Изучить" (studyButton)
-        return super.mouseClicked(mx, my, btn);
-    }
+//    private boolean handleEntryClick(double mx, double my, int btn) {
+//        int x = this.leftPos + DISP_X_OFF;
+//        int y = this.topPos + DISP_Y_OFF;
+//
+//        // Клик по кнопке "Назад" в тексте
+//        if (mx >= x && mx <= x + 45 && my >= y + DISP_H - 15) {
+//            closeEntry();
+//            return true;
+//        }
+//
+//        // Позволяем работать кнопке "Изучить" (studyButton)
+//        return super.mouseClicked(mx, my, btn);
+//    }
 
     private boolean handleTreeClick(double mx, double my, int btn) {
         // Проверка вкладок
@@ -303,18 +367,33 @@ public class ResearchTabsScreen extends Screen {
     private boolean handleTabClick(double mx, double my) {
         int x = this.leftPos - 24;
         int y = this.topPos + 30;
-        int i = 0;
 
-        for (net.futurepack.research.ResearchTab tab : net.futurepack.research.ResearchManager.getTabs()) {
-            if (!ClientResearchState.isTabVisible(tab.id())) continue;
-            int ty = y + i * 28;
-            int tx = (tab.equals(currentTab)) ? x + 4 : x;
+        List<ResearchTab> visibleTabs = getVisibleTabsList();
 
-            if (mx >= tx && mx <= tx + 26 && my >= ty && my <= ty + 26) {
-                this.currentTab = tab;
+        int displayedCount = 0;
+        for (int i = 0; i < 7; i++) {
+            int actualIndex = i + tabScrollOffset;
+            if (actualIndex >= visibleTabs.size()) break;
+
+            ResearchTab tab = visibleTabs.get(actualIndex);
+
+            int ty = y + displayedCount * 26; // Шаг ДОЛЖЕН БЫТЬ 26
+            // Зона клика должна учитывать смещение активной вкладки
+            int tx = (tab.id().equals(currentTab.id())) ? x + 3 : x;
+
+            // Проверяем попадание в квадрат 24x24 (размер спрайта)
+            if (mx >= tx && mx <= tx + 24 && my >= ty && my <= ty + 24) {
+                if (!this.currentTab.id().equals(tab.id())) {
+                    this.currentTab = tab;
+                    // Можно добавить звук клика для сочности
+                    net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
+                            net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                                    net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, 1.0F)
+                    );
+                }
                 return true;
             }
-            i++;
+            displayedCount++;
         }
         return false;
     }

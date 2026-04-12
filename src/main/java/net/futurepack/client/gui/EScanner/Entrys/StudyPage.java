@@ -1,5 +1,7 @@
 package net.futurepack.client.gui.EScanner.Entrys;
 
+import net.futurepack.client.gui.EScanner.EScannerMainScreen;
+import net.futurepack.client.gui.EScanner.IScannerScreen;
 import net.futurepack.client.gui.EScanner.ResearchTabsScreen;
 import net.futurepack.research.ClientResearchState;
 import net.futurepack.research.ResearchNode;
@@ -23,7 +25,14 @@ public class StudyPage extends AbstractResearchPage {
     }
 
     @Override
-    public void init(ResearchTabsScreen screen,ResearchNode node, int x, int y, int width, int height) {
+    protected int getContentHeight() {
+        int textHeight = Minecraft.getInstance().font.split(this.text, w - 20).size() * 9;
+        return 85 + textHeight + 20; // Иконка + Текст + Отступ
+    }
+
+
+    @Override
+    public void init(IScannerScreen screen, ResearchNode node, int x, int y, int width, int height) {
         super.init(screen, node, x, y, width, height);
 
         // Создаем кнопку "Изучить"
@@ -40,30 +49,19 @@ public class StudyPage extends AbstractResearchPage {
         }
     }
 
+
+
+
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        Minecraft mc = Minecraft.getInstance();
-
-        // 1. Заголовок (наш кастомный цвет)
-        renderTitle(g, this.node.title(), 0x00FFCC);
-
-        // 2. Иконка предмета (маленькая, слева от заголовка)
-        g.renderItem(this.node.icon(), this.x + 8, this.y + 8);
-
-        // 3. Основная картинка (чертеж) - ОДИН РАЗ на высоте y + 25
-        g.blit(this.image, this.x + (this.w - 64) / 2, this.y + 25, 0, 0, 64, 64, 64, 64);
-
-        // 4. Описание под картинкой (сдвинули на y + 95, чтобы не перекрывать фото)
-        g.drawWordWrap(mc.font, this.text, this.x + 10, this.y + 95, this.w - 20, 0xFFFFFF);
-
-        // 5. Визуальный статус
-        if (ClientResearchState.isCompleted(this.node.id())) {
-            g.drawCenteredString(mc.font, "✔ ИЗУЧЕНО", this.x + this.w / 2, this.y + this.h - 20, 0x00FFCC);
-        }
+    protected void renderPageContent(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        // Рисуем картинку
+        g.blit(this.image, this.x + (this.w - 64) / 2, this.y + 15, 0, 0, 64, 64, 64, 64);
+        // Рисуем текст
+        g.drawWordWrap(Minecraft.getInstance().font, this.text, this.x + 10, this.y + 85, this.w - 20, 0xFFFFFF);
     }
 
     @Override
-    public void onClose(ResearchTabsScreen screen) {
+    public void onClose(IScannerScreen screen) {
         if (this.studyButton != null) {
             screen.removeWidgetPublic(this.studyButton);
         }

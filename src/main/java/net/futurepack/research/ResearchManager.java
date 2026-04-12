@@ -36,6 +36,98 @@ public class ResearchManager {
                 ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
                 ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
 
+        registerTab(new ResearchTab("1",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("2",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("3",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("4",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("5",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("6",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("7",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("8",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("9",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+
+        registerTab(new ResearchTab("10",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("11",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("12",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("13",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
 //
         // 2. СЛЕДУЮЩИЙ ШАГ (Будет LOCKED (серым), пока не изучишь "start")
         registerNode(new ResearchNode("ufo", "space",
@@ -74,7 +166,31 @@ public class ResearchManager {
                 new ItemStack(Items.COMPASS),null, 0, 0,
                 List.of(), List.of(), false,
 
-                new TextPage("Добро пожаловать в Futurepack! Здесь начинается твой путь в космос."),
+                new TextPage("""
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                А также неприлично много текста 
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                
+                
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                
+                
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.
+                
+                        
+                        
+                        
+                        """),
                 ResearchNode.NodeFrameType.GOLDEN
         ));
 
@@ -85,7 +201,7 @@ public class ResearchManager {
                 new ItemStack(Items.BEACON),null, 0, -60,
                 List.of("start"), List.of("start"), false,
 
-                new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png"),
+                new StudyPage("Изучите свойства неона. C Нерпилично большим количеством текста Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.", "textures/gui/entries/neon_img.png"),
                 ResearchNode.NodeFrameType.GOLDEN
         ));
     }
