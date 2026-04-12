@@ -1,6 +1,7 @@
 package net.futurepack.research;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-public record ResearchTab(String id, Component title, ItemStack icon) {}
+public record ResearchTab(String id, Component title, ItemStack icon, ResourceLocation tab_bg, ResourceLocation custom_icon) {}

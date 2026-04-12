@@ -7,8 +7,8 @@ import net.minecraft.network.chat.Component;
 
 public interface IResearchPage {
     void init(ResearchTabsScreen screen, ResearchNode node, int x, int y, int width, int height);
-    void render(GuiGraphics g, ResearchNode node, int mouseX, int mouseY, float partialTick);
-    void onClose(ResearchTabsScreen screen, ResearchNode node);
+    void render(GuiGraphics g, int mouseX, int mouseY, float partialTick);
+    void onClose(ResearchTabsScreen screen);
 
     default Component getPageTitle(ResearchNode node) {
         return node.title(); // По умолчанию берем из ноды

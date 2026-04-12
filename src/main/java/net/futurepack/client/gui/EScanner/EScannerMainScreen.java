@@ -1,6 +1,7 @@
 package net.futurepack.client.gui.EScanner;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.futurepack.research.ResearchNode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -17,9 +18,15 @@ public class EScannerMainScreen extends Screen {
     private static final int IMG_H = 235;
     private int leftPos, topPos;
 
+    private final  ResearchTabsScreen research_screen;
+    private ResearchNode readingEntry = null;
     public EScannerMainScreen() {
         super(Component.literal("E-Scanner Main"));
+        this.research_screen = new ResearchTabsScreen(this);
+//        this.readingEntry = research_screen.selectedEntry;
     }
+
+
 
     @Override
     protected void init() {
@@ -35,7 +42,7 @@ public class EScannerMainScreen extends Screen {
         // 1. Кнопка "Исследования"
         this.addRenderableWidget(Button.builder(Component.literal("Исследования"), b -> {
             // ОТКРЫВАЕМ НОВОЕ ОКНО И ПЕРЕДАЕМ ТУДА ССЫЛКУ НА ЭТОТ ЭКРАН (чтобы можно было вернуться)
-            this.minecraft.setScreen(new ResearchTabsScreen());
+            this.minecraft.setScreen(this.research_screen);
         }).bounds(btnX, startY, btnW, btnH).build());
 
         // 2. Кнопка "Результаты сканирования" (Пока заглушка)

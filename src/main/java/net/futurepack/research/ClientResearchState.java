@@ -45,5 +45,14 @@ public class ClientResearchState {
         return getData().completedIds().contains(id);
     }
 
+    public static boolean isTabVisible(String tabId) {
+        // Вкладка видна, если в ней есть ХОТЯ БЫ ОДНА нода, статус которой НЕ HIDDEN
+        // (То есть она либо LOCKED, либо AVAILABLE, либо COMPLETED)
+
+
+        return ResearchManager.getNodesForTab(tabId).stream()
+                .anyMatch(node -> (getStatus(node) != ResearchNode.Status.HIDDEN && getStatus(node) != ResearchNode.Status.LOCKED) );
+    }
+
 
 }

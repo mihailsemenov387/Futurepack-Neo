@@ -23,32 +23,32 @@ public class StudyPage extends AbstractResearchPage {
     }
 
     @Override
-    public void init(ResearchTabsScreen screen, ResearchNode node, int x, int y, int width, int height) {
+    public void init(ResearchTabsScreen screen,ResearchNode node, int x, int y, int width, int height) {
         super.init(screen, node, x, y, width, height);
 
         // Создаем кнопку "Изучить"
         this.studyButton = Button.builder(Component.literal("Изучить"), b -> {
-            PacketDistributor.sendToServer(new RequestCompletePayload(node.id()));
+            PacketDistributor.sendToServer(new RequestCompletePayload(this.node.id()));
             b.visible = false;
         }).bounds(this.x + (this.w - 80) / 2, this.y + this.h - 25, 80, 20).build();
 
         screen.addWidgetPublic(this.studyButton);
 
         // Скрываем кнопку, если уже изучено
-        if (ClientResearchState.isCompleted(node.id())) {
+        if (ClientResearchState.isCompleted(this.node.id())) {
             this.studyButton.visible = false;
         }
     }
 
     @Override
-    public void render(GuiGraphics g, ResearchNode node, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         Minecraft mc = Minecraft.getInstance();
 
         // 1. Заголовок (наш кастомный цвет)
-        renderTitle(g, node.title(), 0x00FFCC);
+        renderTitle(g, this.node.title(), 0x00FFCC);
 
         // 2. Иконка предмета (маленькая, слева от заголовка)
-        g.renderItem(node.icon(), this.x + 8, this.y + 8);
+        g.renderItem(this.node.icon(), this.x + 8, this.y + 8);
 
         // 3. Основная картинка (чертеж) - ОДИН РАЗ на высоте y + 25
         g.blit(this.image, this.x + (this.w - 64) / 2, this.y + 25, 0, 0, 64, 64, 64, 64);
@@ -57,13 +57,13 @@ public class StudyPage extends AbstractResearchPage {
         g.drawWordWrap(mc.font, this.text, this.x + 10, this.y + 95, this.w - 20, 0xFFFFFF);
 
         // 5. Визуальный статус
-        if (ClientResearchState.isCompleted(node.id())) {
+        if (ClientResearchState.isCompleted(this.node.id())) {
             g.drawCenteredString(mc.font, "✔ ИЗУЧЕНО", this.x + this.w / 2, this.y + this.h - 20, 0x00FFCC);
         }
     }
 
     @Override
-    public void onClose(ResearchTabsScreen screen, ResearchNode node) {
+    public void onClose(ResearchTabsScreen screen) {
         if (this.studyButton != null) {
             screen.removeWidgetPublic(this.studyButton);
         }

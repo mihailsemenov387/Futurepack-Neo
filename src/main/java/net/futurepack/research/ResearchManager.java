@@ -3,6 +3,7 @@ package net.futurepack.research;
 import net.futurepack.client.gui.EScanner.Entrys.StudyPage;
 import net.futurepack.client.gui.EScanner.Entrys.TextPage;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import java.util.*;
@@ -16,39 +17,25 @@ public class ResearchManager {
         TABS.clear(); NODES.clear(); NODES_BY_TAB.clear();
 
         // 1. Регистрируем табы
-        registerTab(new ResearchTab("space", Component.literal("Космос"), new ItemStack(Items.ENDER_EYE)));
-        registerTab(new ResearchTab("adventure", Component.literal("Приключения"), new ItemStack(Items.IRON_SWORD)));
-        registerTab(new ResearchTab("tech", Component.literal("Приключения"), new ItemStack(Items.IRON_SWORD)));
-        registerTab(new ResearchTab("astronomy", Component.literal("Приключения"), new ItemStack(Items.IRON_SWORD)));
-        registerTab(new ResearchTab("thermodynamics", Component.literal("Термодинамика"), new ItemStack(Items.NETHER_STAR)));
+        registerTab(new ResearchTab("space",
+                Component.literal("Космос"),
+                new ItemStack(Items.ENDER_EYE),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
 
-        // 2. Регистрируем ноды
-//        registerNode(new ResearchNode("start", "space",
-//                Component.literal("Основы"), Component.literal("Начало пути."),
-//                new ItemStack(Items.COMPASS), 0, 0,
-//                List.of(), List.of(), false));
-//
-//        registerNode(new ResearchNode("neon", "space",
-//                Component.literal("Неон"), Component.literal("Энергия газов."),
-//                new ItemStack(Items.BEACON), 0, -60,
-//                List.of("start"), List.of("start"), false));
-//
-//        registerNode(new ResearchNode("laser_tech_I", "thermodynamics",
-//                Component.literal("laser"), Component.literal("LASERS!!!."),
-//                new ItemStack(Items.ECHO_SHARD), 0, 0,
-//                List.of(), List.of("start", "neon"), false)); // Скрытая нода в другом табе!
-//
-//        registerNode(new ResearchNode("alien_tech", "adventure",
-//                Component.literal("НЛО"), Component.literal("Секрет."),
-//                new ItemStack(Items.ECHO_SHARD), 0, 0,
-//                List.of(), List.of("start"), true)); // Скрытая нода в другом табе!
-//
-//        // 1. КОРЕНЬ (Виден сразу, доступен для изучения)
-//        registerNode(new ResearchNode("start", "space",
-//                Component.literal("Основы"), Component.literal("Нажми 'Изучить', чтобы начать."),
-//                new ItemStack(Items.COMPASS), 0, 0,
-//                List.of(), List.of(), // Нет родителей, нет требований
-//                false));
+        registerTab(new ResearchTab("adventure",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_2.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
+
+        registerTab(new ResearchTab("tech",
+                Component.literal("Приключения"),
+                new ItemStack(Items.IRON_SWORD),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg_3.png"),
+                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+
 //
         // 2. СЛЕДУЮЩИЙ ШАГ (Будет LOCKED (серым), пока не изучишь "start")
         registerNode(new ResearchNode("ufo", "space",
@@ -56,14 +43,14 @@ public class ResearchManager {
                 new ItemStack(Items.BEACON), null, 30, -60,
                 List.of("start"),    // Линия от "start"
                 List.of("start", "neon"),    // ТРЕБОВАНИЕ изученного "start"
-                false, new TextPage("new locked")));
+                false, new TextPage("new locked"), ResearchNode.NodeFrameType.HEXAGON));
 
         registerNode(new ResearchNode("ufo_II", "space",
                 Component.literal("Неон"),
                 new ItemStack(Items.BEACON),null, 50, -60,
                 List.of("ufo"),    // Линия от "start"
                 List.of("start", "neon", "ufo", "iron_tech"),    // ТРЕБОВАНИЕ изученного "start"
-                false, new TextPage("new locked")));
+                false, new TextPage("new locked"), ResearchNode.NodeFrameType.HEXAGON));
 
         // 3. СЕКРЕТ (Вообще не появится, пока не просканируешь блок железа)
         registerNode(new ResearchNode("iron_tech", "space",
@@ -71,8 +58,14 @@ public class ResearchManager {
                 new ItemStack(Items.IRON_INGOT),null, 60, -60,
                 List.of("start"),
                 List.of("start"),
-                true, new TextPage("secret"))); // Скрыто по умолчанию!
+                true, new TextPage("secret"), ResearchNode.NodeFrameType.HEXAGON)); // Скрыто по умолчанию!
 
+        registerNode(new ResearchNode("gold_tech", "tech",
+                Component.literal("золото"),
+                new ItemStack(Items.GOLD_INGOT),null, 60, -60,
+                List.of(),
+                List.of("iron_tech"),
+                false, new TextPage("secret"), ResearchNode.NodeFrameType.ERK)); // Скрыто по умолчанию!
 
 
         registerNode(new ResearchNode(
@@ -81,7 +74,8 @@ public class ResearchManager {
                 new ItemStack(Items.COMPASS),null, 0, 0,
                 List.of(), List.of(), false,
 
-                new TextPage("Добро пожаловать в Futurepack! Здесь начинается твой путь в космос.") // <-- Передали TextPage
+                new TextPage("Добро пожаловать в Futurepack! Здесь начинается твой путь в космос."),
+                ResearchNode.NodeFrameType.GOLDEN
         ));
 
 // 2. Нода с картинкой и кнопкой "Изучить"
@@ -91,7 +85,8 @@ public class ResearchManager {
                 new ItemStack(Items.BEACON),null, 0, -60,
                 List.of("start"), List.of("start"), false,
 
-                new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png") // <-- Передали StudyPage
+                new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png"),
+                ResearchNode.NodeFrameType.GOLDEN
         ));
     }
 

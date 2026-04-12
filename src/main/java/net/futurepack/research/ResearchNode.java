@@ -1,24 +1,3 @@
-//package net.futurepack.research;
-//
-//import net.minecraft.network.chat.Component;
-//import net.minecraft.world.item.ItemStack;
-//import java.util.List;
-//
-//public record ResearchNode(
-//        String id,
-//        String tabId,             // К какому табу принадлежит
-//        Component title,
-//        Component description,
-//        ItemStack icon,
-//        int treeX, int treeY,
-//        List<String> parents,      // Для отрисовки линий
-//        List<String> requirements, // Что реально нужно изучить (может быть из других табов)
-//        boolean isHidden           // Скрыто ли до сканирования
-//) {
-//    public enum Status { HIDDEN, LOCKED, AVAILABLE, COMPLETED }
-//}
-
-
 package net.futurepack.research;
 
 import net.minecraft.network.chat.Component;
@@ -34,10 +13,26 @@ public record ResearchNode(
         ItemStack icon,
         ResourceLocation customIcon,
         int treeX, int treeY,
-        List<String> parents,
+        List<String> links,
         List<String> requirements,
         boolean isHidden,
-        IResearchPage page // Логика отрисовки внутреннего контента
+        IResearchPage page,
+        NodeFrameType frame// Логика отрисовки внутреннего контента
+
 ) {
     public enum Status { HIDDEN, LOCKED, AVAILABLE, COMPLETED }
+    public enum NodeFrameType {
+        HEXAGON,
+        GOLDEN,
+        ERK
+    }
+
+    public static ResourceLocation getFramePathByType(NodeFrameType type) {
+        return switch (type) {
+            case GOLDEN -> ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/slot_so_bg.png");
+            case HEXAGON -> ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/slot_bg.png");
+            default -> ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/slot_erk_bg.png");
+        };
+    }
+
 }
