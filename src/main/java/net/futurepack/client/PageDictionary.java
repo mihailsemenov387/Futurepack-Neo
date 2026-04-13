@@ -14,17 +14,24 @@ public class PageDictionary {
 
     // Это метод инициализации, который мы вызовем вручную
     public static void onClientSetup(FMLClientSetupEvent event) {
-        PAGES.clear();
+//        PAGES.clear();
 
         // Твои страницы
-        PAGES.put("start", new TextPage("Добро пожаловать в Futurepack!"));
-        PAGES.put("neon", new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png"));
-        PAGES.put("ufo", new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png"));
-
-        System.out.println("[Futurepack] PageDictionary: " + PAGES.size() + " pages loaded.");
+//        PAGES.put("start", new TextPage("Добро пожаловать в Futurepack!"));
+//        PAGES.put("iron_tech", new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png"));
+//        PAGES.put("ufo", new StudyPage("Изучите свойства неона.", "textures/gui/entries/neon_img.png"));
+//
+//        System.out.println("[Futurepack] PageDictionary: " + PAGES.size() + " pages loaded.");
     }
 
     public static IResearchPage getPage(String nodeId) {
         return PAGES.get(nodeId);
     }
+
+    public static void registerPage(String id, IResearchPage page) {
+        PAGES.put(id, page);
+    }
+
+
+
 }
