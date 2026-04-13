@@ -10,10 +10,14 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class TextPage extends AbstractResearchPage {
-    private final Component content;
+    private Component content;
 
     public TextPage(String text) {
         this.content = Component.literal(text);
+    }
+
+    public TextPage(){
+
     }
 
     @Override

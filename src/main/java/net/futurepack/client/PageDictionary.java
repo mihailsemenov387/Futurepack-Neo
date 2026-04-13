@@ -1,6 +1,9 @@
 package net.futurepack.client;
 
+import com.google.gson.JsonObject;
 import net.futurepack.client.gui.EScanner.Entrys.IResearchPage;
+import net.futurepack.client.gui.EScanner.Entrys.RegistryPage;
+import net.futurepack.client.gui.EScanner.Entrys.StudyPage;
 import net.futurepack.client.gui.EScanner.Entrys.TextPage;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -18,6 +21,20 @@ public class PageDictionary {
 
     }
 
+    public static void registerPageFromJson(String nodeId, String type, JsonObject data) {
+        Supplier<IResearchPage> constructor = RegistryPage.AVALIBLE_PAGE_TYPES.get(type);
+
+        if (constructor != null) {
+            registerPage(nodeId, () -> {
+                IResearchPage page = constructor.get(); // Вызывает new StudyPage()
+                page.readContentFromJson(data);        // Заполняет данными
+                return page;
+            });
+        } else {
+            System.err.println("[Futurepack] Ошибка: Неизвестный тип страницы '" + type + "' для ноды " + nodeId);
+        }
+
+    }
 
     public static IResearchPage getPage(String nodeId) {
         if (CACHE.containsKey(nodeId)) {

@@ -1,5 +1,6 @@
 package net.futurepack.research;
 
+import com.google.gson.JsonObject;
 import net.futurepack.client.PageDictionary;
 import net.futurepack.client.gui.EScanner.Entrys.IResearchPage;
 import net.minecraft.network.chat.Component;
@@ -46,13 +47,13 @@ public class ResearchSystem {
             return this;
         }
 
-        public NodeBuilder parents(String ids) {
+        public NodeBuilder parents(String... ids) {
             this.links = List.of(ids);
 
             return this;
         }
 
-        public NodeBuilder requirements(String ids) {
+        public NodeBuilder requirements(String... ids) {
             this.requirements = List.of(ids);
 
             return this;
@@ -66,6 +67,15 @@ public class ResearchSystem {
             }
             return this;
         }
+
+        public NodeBuilder page(String type, JsonObject data) {
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                PageDictionary.registerPageFromJson(this.id, type, data);
+            }
+            return this;
+        }
+
+
 
         public void build() {
             if (ResearchRegistry.getNode(this.id) != null) {

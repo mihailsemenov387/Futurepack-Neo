@@ -1,5 +1,6 @@
 package net.futurepack.client.gui.EScanner.Entrys;
 
+import com.google.gson.JsonObject;
 import net.futurepack.client.gui.EScanner.IScannerScreen;
 import net.futurepack.research.ResearchNode;
 import net.minecraft.client.Minecraft;
@@ -47,6 +48,10 @@ public abstract class AbstractResearchPage implements IResearchPage {
             drawScrollbar(g, maxScroll, visibleHeight);
         }
     }
+    @Override
+    public void readContentFromJson(JsonObject json) {
+    }
+
 
     // Добавляем новый абстрактный метод
     protected abstract int getContentHeight();

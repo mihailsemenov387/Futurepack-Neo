@@ -50,7 +50,7 @@ public class ClientResearchState {
         // (То есть она либо LOCKED, либо AVAILABLE, либо COMPLETED)
 
         return ResearchRegistry.getNodesForTab(tabId).stream()
-                .anyMatch(node -> (getStatus(node) != ResearchNode.Status.HIDDEN && getStatus(node) != ResearchNode.Status.LOCKED) );
+                .anyMatch(node -> (getStatus(node) != ResearchNode.Status.HIDDEN && getStatus(node) != ResearchNode.Status.LOCKED));
     }
 
     public static boolean hasUnreadInTab(String tabId) {

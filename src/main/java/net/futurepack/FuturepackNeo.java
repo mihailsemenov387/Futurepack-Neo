@@ -1,6 +1,7 @@
 package net.futurepack;
 
 import net.futurepack.client.PageDictionary;
+import net.futurepack.client.gui.EScanner.Entrys.RegistryPage;
 import net.futurepack.event.ClientEvents;
 import net.futurepack.event.ServerEvents;
 import net.futurepack.network.Networking;
@@ -55,6 +56,8 @@ public class FuturepackNeo {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             // 2. Явно подписываем метод словаря на шину мода (MOD bus)
             // Это заменяет @EventBusSubscriber и bus = MOD
+            RegistryPage.init();
+
             modEventBus.addListener(PageDictionary::onClientSetup);
         }
 

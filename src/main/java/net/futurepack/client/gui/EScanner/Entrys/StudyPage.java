@@ -1,5 +1,6 @@
 package net.futurepack.client.gui.EScanner.Entrys;
 
+import com.google.gson.JsonObject;
 import net.futurepack.client.gui.EScanner.EScannerMainScreen;
 import net.futurepack.client.gui.EScanner.IScannerScreen;
 import net.futurepack.client.gui.EScanner.ResearchTabsScreen;
@@ -14,14 +15,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class StudyPage extends AbstractResearchPage {
-    private final Component text;
-    private final ResourceLocation image;
+    private  Component text;
+    private  ResourceLocation image;
     private Button studyButton;
 
     public StudyPage(String text, String imagePath) {
         this.text = Component.literal(text);
         // Путь указываем относительно папки textures, например "textures/gui/entries/neon.png"
         this.image = ResourceLocation.fromNamespaceAndPath("futurepack", imagePath);
+    }
+
+    public StudyPage(){
+
     }
 
     @Override
@@ -49,7 +54,11 @@ public class StudyPage extends AbstractResearchPage {
         }
     }
 
-
+    @Override
+    public void readContentFromJson(JsonObject json) {
+        this.text = Component.literal(json.get("text").getAsString());
+        this.image =  ResourceLocation.fromNamespaceAndPath("futurepack",json.get("image").getAsString());
+    }
 
 
     @Override
