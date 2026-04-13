@@ -6,7 +6,6 @@ import net.futurepack.research.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -55,7 +54,7 @@ public class ResearchTabsScreen extends Screen implements IScannerScreen {
 
     // Вспомогательный метод для получения ТОЛЬКО видимых вкладок
     private List<ResearchTab> getVisibleTabs() {
-        return ResearchManager.getTabs().stream()
+        return ResearchRegistry.getTabs().stream()
                 .filter(tab -> ClientResearchState.isTabVisible(tab.id()))
                 .toList();
     }
@@ -263,7 +262,7 @@ public class ResearchTabsScreen extends Screen implements IScannerScreen {
     public Map<String, ResearchNode> getResearches() {
         Map<String, ResearchNode> tabNodes = new HashMap<>();
         if (currentTab != null) {
-            for (ResearchNode node : ResearchManager.getNodesForTab(currentTab.id())) {
+            for (ResearchNode node : ResearchRegistry.getNodesForTab(currentTab.id())) {
                 tabNodes.put(node.id(), node);
             }
         }

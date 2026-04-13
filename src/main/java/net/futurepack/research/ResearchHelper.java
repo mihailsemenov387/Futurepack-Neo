@@ -1,10 +1,8 @@
 package net.futurepack.research;
 
-import net.futurepack.registry.AttachmentRegistry;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import java.util.HashSet;
+
 import java.util.Set;
 
 public class ResearchHelper {
@@ -59,7 +57,7 @@ public class ResearchHelper {
     public static void updateProgress(Player player, String id, ProgressType type) {
         if (!(player instanceof ServerPlayer serverPlayer)) return;
 
-        ResearchNode node = ResearchManager.getNode(id);
+        ResearchNode node = ResearchRegistry.getNode(id);
         if (node == null) return;
 
         var data = serverPlayer.getData(net.futurepack.registry.AttachmentRegistry.RESEARCH_DATA);
@@ -87,7 +85,7 @@ public class ResearchHelper {
 
             // 3. МАГИЯ: Если раньше не видел, а теперь видит — значит открылся новый раздел!
             if (!wasTabVisible && isTabVisibleNow) {
-                net.futurepack.research.ResearchTab tab = ResearchManager.getTab(node.tabId());
+                net.futurepack.research.ResearchTab tab = ResearchRegistry.getTab(node.tabId());
                 if (tab != null) {
                     serverPlayer.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                             "§6[E-Scanner]§f Расшифрован новый раздел данных: §e" + tab.title().getString()));
@@ -111,7 +109,7 @@ public class ResearchHelper {
     }
 
     private static boolean isTabVisible(PlayerResearch data, String tabId) {
-        return ResearchManager.getNodesForTab(tabId).stream().anyMatch(n ->
+        return ResearchRegistry.getNodesForTab(tabId).stream().anyMatch(n ->
                 !n.isHidden() || data.revealedIds().contains(n.id()) || data.completedIds().contains(n.id())
         );
     }

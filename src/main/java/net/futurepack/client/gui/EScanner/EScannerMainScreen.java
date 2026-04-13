@@ -2,7 +2,7 @@ package net.futurepack.client.gui.EScanner;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.futurepack.research.ResearchHelper;
-import net.futurepack.research.ResearchManager;
+import net.futurepack.research.ResearchRegistry;
 import net.futurepack.research.ResearchNode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -63,7 +63,7 @@ public class EScannerMainScreen extends Screen implements IScannerScreen {
         String lastId = ResearchHelper.getLastReadId();
         if (lastId != null) {
             this.addRenderableWidget(Button.builder(Component.literal("Продолжить"), b -> {
-                ResearchNode lastNode = ResearchManager.getNode(ResearchHelper.getLastReadId());
+                ResearchNode lastNode = ResearchRegistry.getNode(ResearchHelper.getLastReadId());
                 if (lastNode != null) {
                     // Создаем экран ТОЛЬКО СЕЙЧАС, когда нода точно есть
                     this.minecraft.setScreen(new EScannerReadScreen(lastNode, this));

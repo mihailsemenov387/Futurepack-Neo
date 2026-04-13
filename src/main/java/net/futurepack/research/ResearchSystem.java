@@ -11,7 +11,7 @@ import net.neoforged.api.distmarker.Dist;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ResearchAPI {
+public class ResearchSystem {
 
     public static class NodeBuilder {
         private final String id;
@@ -34,12 +34,13 @@ public class ResearchAPI {
         public NodeBuilder title(String name) { this.title = Component.literal(name); return this; }
         public NodeBuilder icon(Item item) { this.icon = new ItemStack(item); return this; }
         public NodeBuilder pos(int x, int y) { this.x = x; this.y = y; return this; }
+        public NodeBuilder customIcon(ResourceLocation customIcon){ this.customIcon = customIcon; return this;}
+
         public NodeBuilder frame(ResearchNode.NodeFrameType frame) {
             this.frame = frame;
             return this;
         }
 
-        // И этот для скрытых нод (тоже пригодится):
         public NodeBuilder hidden(boolean hidden) {
             this.isHidden = hidden;
             return this;
@@ -61,22 +62,18 @@ public class ResearchAPI {
         // Настройка страницы (ТОЛЬКО КЛИЕНТ)
         public NodeBuilder page(Supplier<IResearchPage> pageSupplier) {
             if (FMLEnvironment.dist == Dist.CLIENT) {
-                PageDictionary.registerPage(this.id, pageSupplier.get());
+                PageDictionary.registerPage(this.id, pageSupplier);
             }
             return this;
         }
 
         public void build() {
-            // 1. ПРОВЕРКА УНИКАЛЬНОСТИ (как в БД)
-            if (ResearchManager.getNode(this.id) != null) {
+            if (ResearchRegistry.getNode(this.id) != null) {
                 throw new IllegalStateException("Research ID '" + this.id + "' already exists!");
             }
-
-            // 2. Создаем ноду
             ResearchNode node = new ResearchNode(id, tabId, title, icon, customIcon, x, y, links, requirements, isHidden, frame);
 
-            // 3. Регистрируем в твоем ResearchManager
-            ResearchManager.registerNodeViaAPI(node);
+            ResearchRegistry.registerNodeViaAPI(node);
         }
     }
 

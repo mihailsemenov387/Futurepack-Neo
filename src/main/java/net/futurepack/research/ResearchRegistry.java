@@ -8,10 +8,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import java.util.*;
 
-public class ResearchManager {
+public class ResearchRegistry {
     private static final Map<String, ResearchTab> TABS = new LinkedHashMap<>();
     private static final Map<String, ResearchNode> NODES = new HashMap<>();
     private static final Map<String, List<ResearchNode>> NODES_BY_TAB = new HashMap<>();
+
+    public static void registerTab(ResearchTab tab) {
+        if (TABS.containsKey(tab.id())) throw new IllegalStateException("Duplicate Tab ID: " + tab.id());
+        TABS.put(tab.id(), tab);
+        NODES_BY_TAB.put(tab.id(), new ArrayList<>());
+    }
+
+    public static void registerNode(ResearchNode node) {
+        if (NODES.containsKey(node.id())) throw new IllegalStateException("Duplicate Node ID: " + node.id());
+        if (!TABS.containsKey(node.tabId())) throw new IllegalArgumentException("Unknown Tab: " + node.tabId());
+
+        NODES.put(node.id(), node);
+        NODES_BY_TAB.get(node.tabId()).add(node);
+    }
+
+
 
     public static void init() {
         TABS.clear(); NODES.clear(); NODES_BY_TAB.clear();
@@ -26,7 +42,7 @@ public class ResearchManager {
                 ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
 
 //         2. Теперь регистрируем НОДЫ через твое новое API
-        ResearchAPI.create("start").tab("start")
+        ResearchSystem.create("start").tab("start")
                 .pos(0, 0)
                 .title("Начало пути")
                 .icon(Items.COMPASS)
@@ -34,7 +50,7 @@ public class ResearchManager {
                 .page(() -> new TextPage("Добро пожаловать в мир Futurepack!"))
                 .build();
 
-        ResearchAPI.create("ufo").tab("space")
+        ResearchSystem.create("ufo").tab("space")
                 .pos(30, -60).requirements("start")
                 .title("Технологии пришельцев")
                 .icon(Items.BEACON)
@@ -47,24 +63,13 @@ public class ResearchManager {
         registerNode(new ResearchNode(id, tab, Component.literal(name), new ItemStack(icon), null, x, y, links, reqs, hidden, frame));
     }
 
-    private static void registerTab(ResearchTab tab) {
-        TABS.put(tab.id(), tab);
-        NODES_BY_TAB.put(tab.id(), new ArrayList<>());
-    }
 
-    private static void registerNode(ResearchNode node) {
-        NODES.put(node.id(), node);
-        if (NODES_BY_TAB.containsKey(node.tabId())) {
-            NODES_BY_TAB.get(node.tabId()).add(node);
-        }
-    }
 
     public static Collection<ResearchTab> getTabs() { return TABS.values(); }
     public static ResearchTab getTab(String id) { return TABS.get(id); }
     public static ResearchNode getNode(String id) { return NODES.get(id); }
     public static List<ResearchNode> getNodesForTab(String tabId) { return NODES_BY_TAB.getOrDefault(tabId, List.of()); }
     public static Set<String> getAllIds() { return NODES.keySet(); }
-
 
 
     public static void registerNodeViaAPI(ResearchNode node){

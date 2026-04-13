@@ -2,7 +2,7 @@ package net.futurepack.client.gui.EScanner;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.futurepack.research.ClientResearchState;
-import net.futurepack.research.ResearchManager;
+import net.futurepack.research.ResearchRegistry;
 import net.futurepack.research.ResearchNode;
 import net.futurepack.research.ResearchNode.Status;
 import net.futurepack.research.ResearchTab; // Правильный импорт
@@ -103,14 +103,14 @@ public class TreeRenderComponent {
         }
 
         // 4. Линии и Ноды
-        List<ResearchNode> nodes = ResearchManager.getNodesForTab(currentTab.id());
+        List<ResearchNode> nodes = ResearchRegistry.getNodesForTab(currentTab.id());
         for (ResearchNode node : nodes) {
             var status = ClientResearchState.getStatus(node);
             if (status == ResearchNode.Status.HIDDEN) continue;
 
             // Линии
             for (String pId : node.links()) {
-                ResearchNode p = ResearchManager.getNode(pId);
+                ResearchNode p = ResearchRegistry.getNode(pId);
                 if (p != null && ClientResearchState.getStatus(p) != ResearchNode.Status.HIDDEN) {
 
 //                    int lineColor = (status == Status.COMPLETED || status == Status.AVAILABLE) ? 0xFFFFFFFF : 0xFF333333;
@@ -241,7 +241,7 @@ public class TreeRenderComponent {
     public boolean mouseClicked(double mX, double mY, int btn, int dX, int dY, int dW, int dH) {
         if (btn == 0) {
             // Ищем ноды именно в текущем табе через менеджер
-            for (ResearchNode node : ResearchManager.getNodesForTab(parent.getCurrentTabId())) {
+            for (ResearchNode node : ResearchRegistry.getNodesForTab(parent.getCurrentTabId())) {
                 if (isMouseOverNode(node, mX, mY, dX, dY, dW, dH)) {
                     Status status = ClientResearchState.getStatus(node);
                     if (status == Status.AVAILABLE || status == Status.COMPLETED) {
