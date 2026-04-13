@@ -63,10 +63,10 @@ public class EScannerMainScreen extends Screen implements IScannerScreen {
         String lastId = ResearchHelper.getLastReadId();
         if (lastId != null) {
             this.addRenderableWidget(Button.builder(Component.literal("Продолжить"), b -> {
-                ResearchNode node = ResearchManager.getNode(lastId);
-                if (node != null) {
-                    // Создаем экран чтения ТОЛЬКО при нажатии, а не в конструкторе!
-                    this.minecraft.setScreen(new EScannerReadScreen(node, this));
+                ResearchNode lastNode = ResearchManager.getNode(ResearchHelper.getLastReadId());
+                if (lastNode != null) {
+                    // Создаем экран ТОЛЬКО СЕЙЧАС, когда нода точно есть
+                    this.minecraft.setScreen(new EScannerReadScreen(lastNode, this));
                 }
             }).bounds(btnX, startY + 75, btnW, 20).build());
         }

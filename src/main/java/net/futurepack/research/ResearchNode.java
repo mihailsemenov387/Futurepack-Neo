@@ -16,7 +16,7 @@ public record ResearchNode(
         List<String> links,
         List<String> requirements,
         boolean isHidden,
-        IResearchPage page,
+//        IResearchPage page,
         NodeFrameType frame// Логика отрисовки внутреннего контента
 
 ) {

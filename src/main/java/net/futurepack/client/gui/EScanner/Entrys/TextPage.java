@@ -24,7 +24,7 @@ public class TextPage extends AbstractResearchPage {
 
     @Override
     protected void renderPageContent(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        g.drawWordWrap(Minecraft.getInstance().font, content, x + 10, y + 30, w - 20, 0xCCCCCC);
+        g.drawWordWrap(Minecraft.getInstance().font, content, x + 10, y + 30, w - 20, 0x00000000);
     }
     @Override
     public void onClose(IScannerScreen screen) {

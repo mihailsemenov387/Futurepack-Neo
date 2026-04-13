@@ -53,6 +53,8 @@ public abstract class AbstractResearchPage implements IResearchPage {
 
     protected abstract void renderPageContent(GuiGraphics g, int mouseX, int mouseY, float partialTick);
 
+
+//    TODO: remove or fix height
     protected void renderTitle(GuiGraphics g, Component title, int color) {
         g.drawCenteredString(Minecraft.getInstance().font, title, this.x + this.w / 2, this.y + 10, color);
     }

@@ -1,5 +1,6 @@
 package net.futurepack.item.EScanner;
 
+import net.futurepack.client.ClientOpenGui;
 import net.futurepack.client.gui.EScanner.EScannerMainScreen;
 import net.futurepack.research.ResearchHelper;
 import net.minecraft.client.Minecraft;
@@ -45,12 +46,11 @@ public class EScannerItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (level.isClientSide()) {
-            openGui();
+            ClientOpenGui.openMainScreen();
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }
 
-    private void openGui() {
-        Minecraft.getInstance().setScreen(new EScannerMainScreen());
-    }
+
+
 }

@@ -60,9 +60,16 @@ public class ResearchTabsScreen extends Screen implements IScannerScreen {
                 .toList();
     }
 
+//    public void openEntry(ResearchNode node) {
+//        PacketDistributor.sendToServer(new RequestReadPayload(node.id()));
+//        this.minecraft.setScreen(new EScannerReadScreen(node, this));
+//    }
+
     public void openEntry(ResearchNode node) {
+
         PacketDistributor.sendToServer(new RequestReadPayload(node.id()));
         this.minecraft.setScreen(new EScannerReadScreen(node, this));
+
     }
 
     @Override

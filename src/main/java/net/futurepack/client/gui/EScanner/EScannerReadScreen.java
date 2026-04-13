@@ -1,5 +1,6 @@
 package net.futurepack.client.gui.EScanner;
 
+import net.futurepack.client.gui.EScanner.Entrys.IResearchPage;
 import net.futurepack.research.ResearchHelper;
 import net.futurepack.research.ResearchNode;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.GameRenderer;
 
 public class EScannerReadScreen extends Screen implements IScannerScreen {
     private final ResearchNode node;
+    private IResearchPage page;
     private final Screen backScreen;
     private static final ResourceLocation BG = ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/escanner_bg.png");
 
@@ -25,14 +27,24 @@ public class EScannerReadScreen extends Screen implements IScannerScreen {
         }
     }
 
+
+
     @Override
     protected void init() {
-        if (node != null && node.page() != null) {
-            // Инициализация кнопок страницы
-            node.page().init(this, node, (this.width - 185) / 2 + 51, (this.height - 235) / 2 + 48, 130, 173);
+        super.init(); // Всегда вызывай super
+        if (node != null) {
+            // Берем страницу из словаря
+            this.page = net.futurepack.client.PageDictionary.getPage(node.id());
+
+            // ПРОВЕРКА: Если страница существует — инициализируем
+            if (this.page != null) {
+                this.page.init(this, node, (this.width - 185) / 2 + 51, (this.height - 235) / 2 + 48, 130, 173);
+            } else {
+                // Если страницы нет, можно вывести в консоль ошибку для дебага
+                System.err.println("[Futurepack] Missing Page for node: " + node.id());
+            }
         }
     }
-
     @Override
     public void renderBackground(GuiGraphics g, int mX, int mY, float pT) {}
 
@@ -50,9 +62,9 @@ public class EScannerReadScreen extends Screen implements IScannerScreen {
         int y = iTop + 48;
 //        g.fill(x, y, x + 130, y + 173, 0xFF000508);
 
-        if (node != null && node.page() != null) {
+        if (node != null && page != null) {
             g.enableScissor(x, y, x + 130, y + 173);
-            node.page().render(g, mX, mY, pT);
+            page.render(g, mX, mY, pT);
             g.disableScissor();
         }
 
@@ -63,7 +75,7 @@ public class EScannerReadScreen extends Screen implements IScannerScreen {
     @Override
     public boolean mouseClicked(double mx, double my, int btn) {
         if (btn == 1 || isBackClicked(mx, my)) {
-            if (node != null && node.page() != null) node.page().onClose(this);
+            if (node != null && page != null) page.onClose(this);
             this.minecraft.setScreen(backScreen);
             return true;
         }
@@ -78,8 +90,8 @@ public class EScannerReadScreen extends Screen implements IScannerScreen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (node != null && node.page() != null) {
-            if (node.page().mouseScrolled(scrollY)) return true;
+        if (node != null && page != null) {
+            if (page.mouseScrolled(scrollY)) return true;
         }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
@@ -87,7 +99,10 @@ public class EScannerReadScreen extends Screen implements IScannerScreen {
 
     @Override
     public void removed() {
-        // Мы не вызываем onClose тут, потому что он вызывается в mouseClicked
+        // Если экран закрыли (даже на ESC), и страница была активна — закрываем её официально
+        if (page != null) {
+            page.onClose(this);
+        }
         super.removed();
     }
 
