@@ -180,39 +180,83 @@ public class TreeRenderComponent {
         int minY = Math.min(y1, y2), maxY = Math.max(y1, y2);
         g.fill(minX - 1, minY - 1, maxX + 1, maxY + 1, color);
     }
+//    private void renderTechNode(GuiGraphics g, ResearchNode node, Status status) {
+//        int x = node.treeX();
+//        int y = node.treeY();
+//
+//        // 1. Настройка яркости для всей ноды (Тинтинг)
+//        if (status == Status.COMPLETED) {
+//            g.setColor(1.0f, 1.0f, 1.0f, 1.0f); // Максимальная яркость
+//        } else if (status == Status.AVAILABLE) {
+//            g.setColor(0.6f, 0.6f, 0.6f, 1.0f); // Серый (еще не изучено)
+//        } else {
+//            g.setColor(0.25f, 0.25f, 0.25f, 1.0f); // Почти черный (заблокировано)
+//        }
+//
+//        // 2. Рисуем рамку (она примет цвет из g.setColor автоматически)
+//        renderFrameByType(g, x, y, node.frame(), (status == Status.LOCKED) ? 0xFF333333 : 0xFFFFFFFF);
+//
+//        // 3. Рисуем иконку
+//        com.mojang.blaze3d.platform.Lighting.setupFor3DItems();
+//
+//        if (node.customIcon() != null) {
+//            g.blit(node.customIcon(), x - 8, y - 8, 0, 0, 16, 16, 16, 16);
+//        } else {
+//            g.renderItem(node.icon(), x - 8, y - 8);
+//        }
+//
+//        // Сброс цвета для тултипов и прочего
+//        g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+//
+//        // 4. ТОТ САМЫЙ КРАСНЫЙ ДИОД (только для AVAILABLE и непрочитанных)
+//        if (!ClientResearchState.isRead(node.id()) && status == Status.AVAILABLE) {
+//            renderDiode(g, x, y);
+//        }
+//    }
+
     private void renderTechNode(GuiGraphics g, ResearchNode node, Status status) {
         int x = node.treeX();
         int y = node.treeY();
 
-        // 1. Настройка яркости для всей ноды (Тинтинг)
+        float brightness;
+
         if (status == Status.COMPLETED) {
-            g.setColor(1.0f, 1.0f, 1.0f, 1.0f); // Максимальная яркость
+            brightness = 1.0f; // Изучено — всегда горит ярко
         } else if (status == Status.AVAILABLE) {
-            g.setColor(0.6f, 0.6f, 0.6f, 1.0f); // Серый (еще не изучено)
+            // ПУЛЬСАЦИЯ для доступных нод
+            // Синус дает значение от -1 до 1.
+            // Превращаем его в диапазон от 0.4 (темный) до 0.9 (светло-серый)
+            float wave = (float) (Math.sin(System.currentTimeMillis() / 400.0) * 0.25 + 0.65);
+            brightness = wave;
         } else {
-            g.setColor(0.25f, 0.25f, 0.25f, 1.0f); // Почти черный (заблокировано)
+            brightness = 0.25f; // Заблокировано — всегда почти черное
         }
 
-        // 2. Рисуем рамку (она примет цвет из g.setColor автоматически)
-        renderFrameByType(g, x, y, node.frame(), (status == Status.LOCKED) ? 0xFF333333 : 0xFFFFFFFF);
+        // Применяем яркость ко всей последующей отрисовке (рамка + иконка)
+        g.setColor(brightness, brightness, brightness, 1.0f);
 
-        // 3. Рисуем иконку
+        // 1. Рисуем рамку (она примет цвет из g.setColor)
+        renderFrameByType(g, x, y, node.frame(), 0xFFFFFFFF);
+
+        // 2. Рисуем иконку
         com.mojang.blaze3d.platform.Lighting.setupFor3DItems();
-
         if (node.customIcon() != null) {
             g.blit(node.customIcon(), x - 8, y - 8, 0, 0, 16, 16, 16, 16);
         } else {
+            // Примечание: renderItem не всегда идеально слушается g.setColor,
+            // но на рамке эффект будет виден отлично.
             g.renderItem(node.icon(), x - 8, y - 8);
         }
 
-        // Сброс цвета для тултипов и прочего
+        // Сброс цвета, чтобы не покрасить остальной интерфейс
         g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        // 4. ТОТ САМЫЙ КРАСНЫЙ ДИОД (только для AVAILABLE и непрочитанных)
+        // 3. Красный диод для непрочитанных (оставляем его логику мерцания отдельно)
         if (!ClientResearchState.isRead(node.id()) && status == Status.AVAILABLE) {
             renderDiode(g, x, y);
         }
     }
+
 
     private void renderFrameByType(GuiGraphics g, int x, int y, ResearchNode.NodeFrameType type, int colorWithAlpha) {
         // Для текстур (blit) прозрачность возьмется из g.setColor, установленного ранее

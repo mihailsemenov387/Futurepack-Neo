@@ -9,6 +9,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.api.distmarker.Dist;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -21,8 +23,8 @@ public class ResearchSystem {
         private ItemStack icon;
         private ResourceLocation customIcon;
         private int x, y;
-        private List<String> links = List.of();
-        private List<String> requirements = List.of();
+        private List<String> links = new ArrayList<>();
+        private List<String> requirements = new ArrayList<>();
         private boolean isHidden;
         private ResearchNode.NodeFrameType frame;
 
@@ -47,18 +49,16 @@ public class ResearchSystem {
             return this;
         }
 
-        public NodeBuilder parents(String... ids) {
-            this.links = List.of(ids);
-
-            return this;
-        }
-
         public NodeBuilder requirements(String... ids) {
-            this.requirements = List.of(ids);
-
+            this.requirements.addAll(List.of(ids));
             return this;
         }
 
+
+        public NodeBuilder links(String... ids) {
+            this.links.addAll(List.of(ids));
+            return this;
+        }
 
         // Настройка страницы (ТОЛЬКО КЛИЕНТ)
         public NodeBuilder page(Supplier<IResearchPage> pageSupplier) {

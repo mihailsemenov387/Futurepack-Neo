@@ -8,9 +8,14 @@ import net.futurepack.network.Networking;
 import net.futurepack.registry.AttachmentRegistry;
 import net.futurepack.registry.ItemRegistry;
 import net.futurepack.research.ResearchRegistry;
+import net.futurepack.research.loader.PageLoader;
+import net.futurepack.research.loader.ResearchLoader;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.futurepack.research.ResearchCommand;
@@ -38,6 +43,8 @@ public class FuturepackNeo {
         NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, event -> {
             ResearchCommand.register(event.getDispatcher());
         });
+
+        NeoForge.EVENT_BUS.addListener(this::onAddReloadListeners);
 
         ItemRegistry.ITEMS.register(modEventBus);
         AttachmentRegistry.ATTACHMENT_TYPES.register(modEventBus);
@@ -76,8 +83,25 @@ public class FuturepackNeo {
     }
 
 
-//    @SubscribeEvent
-//    public void onServerStarting(ServerStartingEvent event) {
-//        LOGGER.info("HELLO from server starting");
-//    }
+
+
+    private void onAddReloadListeners(AddReloadListenerEvent event) {
+        // Дерево исследований нужно и серверу, и клиенту
+        event.addListener(new ResearchLoader());
+
+        // А вот контент страниц (визуал) нужен ТОЛЬКО клиенту
+        // Это предотвратит попытку сервера загрузить классы GUI
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            event.addListener(new PageLoader());
+        }
+
+        LOGGER.info("Futurepack: Reload listeners registered explicitly.");
+    }
+
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+        LOGGER.info("HELLO from server starting");
+    }
 }
+
+

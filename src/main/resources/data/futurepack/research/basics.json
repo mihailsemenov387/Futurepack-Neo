@@ -1,0 +1,15 @@
+{
+  "title": "futurepack.tab.basics",
+  "icon": "minecraft:compass",
+  "bg": "futurepack:textures/gui/research_bg.png",
+  "nodes": [
+    { "id": "start", "title": "Начало", "x": 0, "y": 0, "icon": "minecraft:paper", "frame": "ERK" },
+    { "id": "iron_age", "title": "Железный век", "x": 40, "y": 0, "icon": "minecraft:iron_ingot", "frame": "HEXAGON", "links": ["start"], "requirements": ["start"] },
+    { "id": "tools", "title": "Инструменты", "x": 80, "y": 30, "icon": "minecraft:iron_pickaxe", "frame": "HEXAGON", "links": ["iron_age"], "requirements": ["iron_age"] },
+    { "id": "steel", "title": "Закалка стали", "x": 80, "y": -30, "icon": "minecraft:flint_and_steel", "frame": "HEXAGON", "links": ["iron_age"], "requirements": ["iron_age"] },
+    { "id": "machinery", "title": "Механизмы", "x": 120, "y": -30, "icon": "minecraft:furnace", "frame": "HEXAGON", "links": ["steel"], "requirements": ["steel"] },
+    { "id": "adv_tools", "title": "Алмазное напыление", "x": 120, "y": 30, "icon": "minecraft:diamond_pickaxe", "frame": "GOLDEN", "links": ["tools"], "requirements": ["tools"] },
+    { "id": "automation", "title": "Автоматизация", "x": 160, "y": 0, "icon": "minecraft:hopper", "frame": "HEXAGON", "links": ["machinery", "adv_tools"], "requirements": ["machinery"] },
+    { "id": "secret_base", "title": "Секретные чертежи", "x": 0, "y": 60, "icon": "minecraft:spyglass", "frame": "ERK", "hidden": true }
+  ]
+}

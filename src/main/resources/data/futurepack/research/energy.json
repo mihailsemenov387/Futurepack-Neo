@@ -1,0 +1,9 @@
+{
+  "title": "futurepack.tab.energy",
+  "icon": "minecraft:redstone",
+  "bg": "futurepack:textures/gui/research_bg.png",
+  "nodes": [
+    { "id": "batteries", "title": "Хранение энергии", "x": 0, "y": 0, "icon": "minecraft:copper_ingot", "frame": "HEXAGON" },
+    { "id": "generators", "title": "Генерация", "x": 50, "y": 0, "icon": "minecraft:lightning_rod", "frame": "HEXAGON", "links": ["batteries"], "requirements": ["batteries"] }
+  ]
+}

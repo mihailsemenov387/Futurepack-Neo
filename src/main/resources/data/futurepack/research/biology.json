@@ -1,0 +1,8 @@
+{
+  "title": "futurepack.tab.biology",
+  "icon": "minecraft:apple",
+  "bg": "futurepack:textures/gui/research_bg.png",
+  "nodes": [
+    { "id": "dna", "title": "Анализ ДНК", "x": 0, "y": 0, "icon": "minecraft:wheat_seeds", "frame": "ERK" }
+  ]
+}

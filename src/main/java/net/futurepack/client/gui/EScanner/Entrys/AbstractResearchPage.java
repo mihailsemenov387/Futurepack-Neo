@@ -48,9 +48,7 @@ public abstract class AbstractResearchPage implements IResearchPage {
             drawScrollbar(g, maxScroll, visibleHeight);
         }
     }
-    @Override
-    public void readContentFromJson(JsonObject json) {
-    }
+
 
 
     // Добавляем новый абстрактный метод

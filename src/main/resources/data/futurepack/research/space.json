@@ -1,0 +1,12 @@
+{
+  "title": "futurepack.tab.space",
+  "icon": "minecraft:end_crystal",
+  "bg": "futurepack:textures/gui/research_bg.png",
+  "nodes": [
+    { "id": "telescope", "title": "Наблюдение", "x": 0, "y": 0, "icon": "minecraft:spyglass", "frame": "HEXAGON" },
+    { "id": "orbit", "title": "Выход на орбиту", "x": 40, "y": 40, "icon": "minecraft:firework_rocket", "frame": "HEXAGON", "links": ["telescope"], "requirements": ["telescope"] },
+    { "id": "moon", "title": "Высадка на Луну", "x": 80, "y": 0, "icon": "minecraft:ender_pearl", "frame": "GOLDEN", "links": ["orbit"], "requirements": ["orbit"] },
+    { "id": "ufo_scan", "title": "Сигнал извне", "x": -40, "y": -40, "icon": "minecraft:beacon", "frame": "ERK", "hidden": true },
+    { "id": "alien_tech", "title": "Технологии предков", "x": 0, "y": -80, "icon": "minecraft:nether_star", "frame": "GOLDEN", "links": ["ufo_scan"], "requirements": ["ufo_scan"] }
+  ]
+}

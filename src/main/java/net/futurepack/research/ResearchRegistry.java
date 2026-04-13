@@ -32,31 +32,33 @@ public class ResearchRegistry {
     public static void init() {
         TABS.clear(); NODES.clear(); NODES_BY_TAB.clear();
 
-        // 1. Сначала регистрируем ТАБЫ
-        registerTab(new ResearchTab("start", Component.literal("Основы"), new ItemStack(Items.BOOK),
-                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png"),
-                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
 
-        registerTab(new ResearchTab("space", Component.literal("Основы"), new ItemStack(Items.BOOK),
-                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png"),
-                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
-
-//         2. Теперь регистрируем НОДЫ через твое новое API
-        ResearchSystem.create("start").tab("start")
-                .pos(0, 0)
-                .title("Начало пути")
-                .icon(Items.COMPASS)
-                .frame(ResearchNode.NodeFrameType.ERK)
-                .page(() -> new TextPage("Добро пожаловать в мир Futurepack!"))
-                .build();
-
-        ResearchSystem.create("ufo").tab("space")
-                .pos(30, -60).requirements("start")
-                .title("Технологии пришельцев")
-                .icon(Items.BEACON)
-                .frame(ResearchNode.NodeFrameType.HEXAGON).hidden(true)
-                .page(() -> new StudyPage("Эти данные были получены из обломков...", "textures/gui/entries/ufo.png"))
-                .build();
+//
+//        // 1. Сначала регистрируем ТАБЫ
+//        registerTab(new ResearchTab("start", Component.literal("Основы"), new ItemStack(Items.BOOK),
+//                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png"),
+//                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+//
+//        registerTab(new ResearchTab("space", Component.literal("Основы"), new ItemStack(Items.BOOK),
+//                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png"),
+//                ResourceLocation.fromNamespaceAndPath("futurepack", "textures/gui/research_bg.png")));
+//
+////         2. Теперь регистрируем НОДЫ через твое новое API
+//        ResearchSystem.create("start").tab("start")
+//                .pos(0, 0)
+//                .title("Начало пути")
+//                .icon(Items.COMPASS)
+//                .frame(ResearchNode.NodeFrameType.ERK)
+//                .page(() -> new TextPage("Добро пожаловать в мир Futurepack!"))
+//                .build();
+//
+//        ResearchSystem.create("ufo").tab("space")
+//                .pos(30, -60).requirements("start")
+//                .title("Технологии пришельцев")
+//                .icon(Items.BEACON)
+//                .frame(ResearchNode.NodeFrameType.HEXAGON).hidden(true)
+//                .page(() -> new StudyPage("Эти данные были получены из обломков...", "textures/gui/entries/ufo.png"))
+//                .build();
     }
 
     private static void add(String id, String tab, String name, net.minecraft.world.item.Item icon, int x, int y, List<String> links, List<String> reqs, boolean hidden, ResearchNode.NodeFrameType frame) {

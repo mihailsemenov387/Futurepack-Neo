@@ -1,5 +1,6 @@
 package net.futurepack.client.gui.EScanner.Entrys;
 
+import com.google.gson.JsonObject;
 import net.futurepack.client.gui.EScanner.IScannerScreen;
 import net.futurepack.research.ClientResearchState;
 import net.futurepack.research.ResearchNode;
@@ -21,11 +22,21 @@ public class TextPage extends AbstractResearchPage {
     }
 
     @Override
-    protected int getContentHeight() {
-        // Считаем высоту текста заранее
-        return Minecraft.getInstance().font.split(content, w - 20).size() * 9 + 15;
+    public void readContentFromJson(JsonObject json) {
+        // ТУТ ИСПРАВЛЕНИЕ: Читаем текст из JSON
+        // Используем translatable для поддержки языков
+        if (json.has("text")) {
+            this.content = Component.translatable(json.get("text").getAsString());
+        } else {
+            this.content = Component.literal("Empty Page");
+        }
     }
 
+    @Override
+    protected int getContentHeight() {
+        if (content == null) return 0;
+        return Minecraft.getInstance().font.split(content, w - 20).size() * 9 + 15;
+    }
     @Override
     protected void renderPageContent(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         g.drawWordWrap(Minecraft.getInstance().font, content, x + 10, y + 30, w - 20, 0x00000000);
