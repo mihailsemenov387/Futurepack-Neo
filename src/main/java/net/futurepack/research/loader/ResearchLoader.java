@@ -16,6 +16,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.Map;
+import static net.futurepack.FuturepackNeo.LOGGER;
 
 public class ResearchLoader extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new Gson();
@@ -70,6 +71,10 @@ public class ResearchLoader extends SimpleJsonResourceReloadListener {
                     if (n.has("links")) {
                         n.getAsJsonArray("links").forEach(link -> builder.links(link.getAsString()));
                     }
+                    if (n.has("hidden")) {
+                        builder.hidden(n.get("hidden").getAsBoolean());
+                    }
+
 
                     builder.build();
                 });

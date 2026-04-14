@@ -10,6 +10,6 @@
     { "id": "machinery", "title": "Механизмы", "x": 120, "y": -30, "icon": "minecraft:furnace", "frame": "HEXAGON", "links": ["steel"], "requirements": ["steel"] },
     { "id": "adv_tools", "title": "Алмазное напыление", "x": 120, "y": 30, "icon": "minecraft:diamond_pickaxe", "frame": "GOLDEN", "links": ["tools"], "requirements": ["tools"] },
     { "id": "automation", "title": "Автоматизация", "x": 160, "y": 0, "icon": "minecraft:hopper", "frame": "HEXAGON", "links": ["machinery", "adv_tools"], "requirements": ["machinery"] },
-    { "id": "secret_base", "title": "Секретные чертежи", "x": 0, "y": 60, "icon": "minecraft:spyglass", "frame": "ERK", "hidden": true }
+    { "id": "secret_base", "title": "Секретные чертежи", "x": 0, "y": 60, "icon": "minecraft:spyglass", "frame": "ERK", "hidden": true, "requirements": ["machinery"]  }
   ]
 }

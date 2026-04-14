@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import java.util.*;
 
+
 public class ResearchRegistry {
     private static final Map<String, ResearchTab> TABS = new LinkedHashMap<>();
     private static final Map<String, ResearchNode> NODES = new HashMap<>();

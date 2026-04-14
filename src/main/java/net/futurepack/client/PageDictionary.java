@@ -53,7 +53,8 @@ public class PageDictionary {
 
     public static void clear() {
         PAGE_SUPPLIERS.clear();
-        CACHE.clear();
+        CACHE.clear(); // <--- ОБЯЗАТЕЛЬНО ЧИСТИМ КЭШ
+        System.out.println("PageDictionary: Cache cleared for reload.");
     }
 
 

@@ -38,7 +38,7 @@ public class FuturepackNeo {
 
     public FuturepackNeo(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
-        ResearchRegistry.init();
+//        ResearchRegistry.init();
 
         NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, event -> {
             ResearchCommand.register(event.getDispatcher());
@@ -95,8 +95,20 @@ public class FuturepackNeo {
             event.addListener(new PageLoader());
         }
 
+
+
         LOGGER.info("Futurepack: Reload listeners registered explicitly.");
     }
+
+//    private void onAddReloadListeners(AddReloadListenerEvent event) {
+//        event.addListener(new ResearchLoader()); // Нужно всем
+//
+//        // PageLoader должен работать и на клиенте тоже,
+//        // чтобы при /reload в одиночке он обновлял визуал!
+//        event.addListener(new PageLoader());
+//        LOGGER.info("Futurepack: Reload listeners registered explicitly.");
+//    }
+
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {

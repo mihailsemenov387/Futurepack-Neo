@@ -60,20 +60,20 @@ public class ResearchSystem {
             return this;
         }
 
-        // Настройка страницы (ТОЛЬКО КЛИЕНТ)
-        public NodeBuilder page(Supplier<IResearchPage> pageSupplier) {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                PageDictionary.registerPage(this.id, pageSupplier);
-            }
-            return this;
-        }
-
-        public NodeBuilder page(String type, JsonObject data) {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                PageDictionary.registerPageFromJson(this.id, type, data);
-            }
-            return this;
-        }
+//        // Настройка страницы (ТОЛЬКО КЛИЕНТ)
+//        public NodeBuilder page(Supplier<IResearchPage> pageSupplier) {
+//            if (FMLEnvironment.dist == Dist.CLIENT) {
+//                PageDictionary.registerPage(this.id, pageSupplier);
+//            }
+//            return this;
+//        }
+//
+//        public NodeBuilder page(String type, JsonObject data) {
+//            if (FMLEnvironment.dist == Dist.CLIENT) {
+//                PageDictionary.registerPageFromJson(this.id, type, data);
+//            }
+//            return this;
+//        }
 
 
 
