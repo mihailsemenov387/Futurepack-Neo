@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.futurepack.client.PageDictionary;
+import net.futurepack.network.SyncResearchPayload;
 import net.futurepack.research.ResearchRegistry;
 import net.futurepack.research.ResearchSystem;
 import net.futurepack.research.ResearchTab;
@@ -15,6 +17,10 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
+
+import java.util.ArrayList;
 import java.util.Map;
 import static net.futurepack.FuturepackNeo.LOGGER;
 
@@ -77,11 +83,22 @@ public class ResearchLoader extends SimpleJsonResourceReloadListener {
 
 
                     builder.build();
+
+
                 });
             } catch (Exception e) {
                 System.err.println("[Futurepack] Error parsing research file: " + location + " -> " + e.getMessage());
             }
         });
+
+        if (ServerLifecycleHooks.getCurrentServer() != null) {
+            var packet = new SyncResearchPayload(
+                    new ArrayList<>(ResearchRegistry.getTabs()),
+                    new ArrayList<>(ResearchRegistry.getNodes()),
+                    PageDictionary.getRawDataForSync()
+            );
+            PacketDistributor.sendToAllPlayers(packet);
+        }
         System.err.println("Futurepack: Loaded research!.");
     }
 }

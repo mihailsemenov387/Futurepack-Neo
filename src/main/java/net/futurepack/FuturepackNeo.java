@@ -40,6 +40,8 @@ public class FuturepackNeo {
         modEventBus.addListener(this::commonSetup);
 //        ResearchRegistry.init();
 
+
+
         NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, event -> {
             ResearchCommand.register(event.getDispatcher());
         });
@@ -87,14 +89,16 @@ public class FuturepackNeo {
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {
         // Дерево исследований нужно и серверу, и клиенту
+//        event.addListener(new ResearchLoader());
+//
+//        // А вот контент страниц (визуал) нужен ТОЛЬКО клиенту
+//        // Это предотвратит попытку сервера загрузить классы GUI
+//        if (FMLEnvironment.dist == Dist.CLIENT) {
+//            event.addListener(new PageLoader());
+//        }
+
+        event.addListener(new PageLoader());
         event.addListener(new ResearchLoader());
-
-        // А вот контент страниц (визуал) нужен ТОЛЬКО клиенту
-        // Это предотвратит попытку сервера загрузить классы GUI
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            event.addListener(new PageLoader());
-        }
-
 
 
         LOGGER.info("Futurepack: Reload listeners registered explicitly.");

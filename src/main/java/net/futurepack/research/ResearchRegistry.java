@@ -75,6 +75,17 @@ public class ResearchRegistry {
     public static Set<String> getAllIds() { return NODES.keySet(); }
 
 
+//    public static void clear() {
+//        TABS.clear();
+//        NODES.clear();
+//        NODES_BY_TAB.clear();
+//    }
+
+    public static Collection<ResearchNode> getNodes() {
+        return NODES.values();
+    }
+
+
     public static void registerNodeViaAPI(ResearchNode node){
         if (NODES.containsKey(node.id())) {
             throw new IllegalStateException("ОШИБКА РЕГИСТРАЦИИ: Нода с ID '" + node.id() + "' уже существует!");
@@ -88,4 +99,6 @@ public class ResearchRegistry {
         // Если всё ок — вызываем внутреннюю регистрацию
         registerNode(node);
     }
+
+    public static void clear() { init(); }
 }

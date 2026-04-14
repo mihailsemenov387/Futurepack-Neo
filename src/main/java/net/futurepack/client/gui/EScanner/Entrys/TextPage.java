@@ -21,6 +21,8 @@ public class TextPage extends AbstractResearchPage {
 
     }
 
+
+
     @Override
     public void readContentFromJson(JsonObject json) {
         // ТУТ ИСПРАВЛЕНИЕ: Читаем текст из JSON
