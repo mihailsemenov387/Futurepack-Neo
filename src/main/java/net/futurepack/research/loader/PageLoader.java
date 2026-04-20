@@ -15,7 +15,7 @@ public class PageLoader extends SimpleJsonResourceReloadListener {
 
     public PageLoader() {
         // Путь: data/<modid>/futurepack/research/pages/
-        super(GSON, "research/pages");
+        super(GSON, "research/pages"); // TODO: change to pages
     }
 
     @Override
@@ -29,7 +29,7 @@ public class PageLoader extends SimpleJsonResourceReloadListener {
         object.forEach((location, element) -> {
             try {
                 JsonObject json = element.getAsJsonObject();
-                String nodeId = location.getPath(); // Имя файла станет ID ноды
+                String nodeId = location.getPath(); // Имя файла станет ID ноды TODO: change to page_id
                 String type = json.get("type").getAsString();
                 JsonObject data = json.getAsJsonObject("data");
 

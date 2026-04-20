@@ -6,10 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.futurepack.client.PageDictionary;
 import net.futurepack.network.SyncResearchPayload;
-import net.futurepack.research.ResearchRegistry;
-import net.futurepack.research.ResearchSystem;
-import net.futurepack.research.ResearchTab;
-import net.futurepack.research.ResearchNode;
+import net.futurepack.research.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -49,23 +46,32 @@ public class ResearchLoader extends SimpleJsonResourceReloadListener {
                 String tabId = location.getPath();
 
                 // 1. Регистрируем вкладку
+                String tabTitleRaw = root.get("title").getAsString();
+                Component tabTitle = ResearchHelper.parseSmartText(tabTitleRaw);
+
                 ResearchRegistry.registerTab(new ResearchTab(
                         tabId,
-                        Component.translatable(root.get("title").getAsString()),
+                        tabTitle,
                         new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(root.get("icon").getAsString()))),
                         ResourceLocation.parse(root.get("bg").getAsString()),
                         ResourceLocation.parse(root.get("bg").getAsString())
                 ));
 
                 // 2. Читаем ноды этой вкладки
+
                 JsonArray nodes = root.getAsJsonArray("nodes");
                 nodes.forEach(nodeEl -> {
+
+
                     JsonObject n = nodeEl.getAsJsonObject();
                     String nodeId = n.get("id").getAsString();
 
+                    String nodeTitleRaw = n.get("title").getAsString();
+                    Component nodeTitle = ResearchHelper.parseSmartText(nodeTitleRaw);
+
                     var builder = ResearchSystem.create(nodeId)
                             .tab(tabId)
-                            .title(n.get("title").getAsString())
+                            .title(nodeTitle)
                             .pos(n.get("x").getAsInt(), n.get("y").getAsInt())
                             .icon(BuiltInRegistries.ITEM.get(ResourceLocation.parse(n.get("icon").getAsString())))
 //                            .frame(ResearchNode.NodeFrameType.valueOf(n.get("frame").getAsString()));

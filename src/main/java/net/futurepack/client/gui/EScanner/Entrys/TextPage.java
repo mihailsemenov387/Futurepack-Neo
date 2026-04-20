@@ -10,6 +10,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import static net.futurepack.research.ResearchHelper.parseSmartText;
+
 public class TextPage extends AbstractResearchPage {
     private Component content;
 
@@ -22,13 +24,10 @@ public class TextPage extends AbstractResearchPage {
     }
 
 
-
     @Override
     public void readContentFromJson(JsonObject json) {
-        // ТУТ ИСПРАВЛЕНИЕ: Читаем текст из JSON
-        // Используем translatable для поддержки языков
         if (json.has("text")) {
-            this.content = Component.translatable(json.get("text").getAsString());
+            this.content = parseSmartText(json.get("text").getAsString());
         } else {
             this.content = Component.literal("Empty Page");
         }

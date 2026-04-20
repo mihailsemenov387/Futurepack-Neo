@@ -88,6 +88,17 @@ public class EScannerMainScreen extends Screen implements IScannerScreen {
         super.render(g, mX, mY, pT);
     }
 
+    @Override
+    public boolean mouseClicked(double mx, double my, int btn) {
+
+        if (btn == 1 ) {
+            this.onClose();
+            return true;
+        }
+        return super.mouseClicked(mx, my, btn);
+    }
+
+
     public <T extends net.minecraft.client.gui.components.events.GuiEventListener & net.minecraft.client.gui.components.Renderable & net.minecraft.client.gui.narration.NarratableEntry> T addWidgetPublic(T widget) {
         return this.addRenderableWidget(widget);
     }

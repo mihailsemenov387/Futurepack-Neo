@@ -9,5 +9,8 @@
   "futurepack.configuration.items": "Item List",
   "futurepack.configuration.logDirtBlock": "Log Dirt Block",
   "futurepack.configuration.magicNumberIntroduction": "Magic Number Text",
-  "futurepack.configuration.magicNumber": "Magic Number"
+  "futurepack.configuration.magicNumber": "Magic Number",
+
+  "futurepack.research.iron_age.desc" : "IRon~!!!!",
+  "futurepack.research.iron_age.node_t" : "iron age"
 }

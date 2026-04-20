@@ -103,20 +103,45 @@ public class TreeRenderComponent {
         }
 
         // 4. Линии и Ноды
+//        List<ResearchNode> nodes = ResearchRegistry.getNodesForTab(currentTab.id());
+//        for (ResearchNode node : nodes) {
+//            var status = ClientResearchState.getStatus(node);
+//            if (status == ResearchNode.Status.HIDDEN) continue;
+//
+//            // Линии
+//            for (String pId : node.links()) {
+//                ResearchNode p = ResearchRegistry.getNode(pId);
+//                if (p != null && ClientResearchState.getStatus(p) != ResearchNode.Status.HIDDEN) {
+//
+////                    int lineColor = (status == Status.COMPLETED || status == Status.AVAILABLE) ? 0xFFFFFFFF : 0xFF333333;
+//                    int lineColor = (status == Status.COMPLETED || status == Status.AVAILABLE) ? 0xFFE6CC00 : 0xFF2B2031;
+//                    renderTechLine(g, p.treeX(), p.treeY(), node.treeX(), node.treeY(),
+//                            lineColor); // COLOR LINE
+//                }
+//            }
+//        }
         List<ResearchNode> nodes = ResearchRegistry.getNodesForTab(currentTab.id());
         for (ResearchNode node : nodes) {
-            var status = ClientResearchState.getStatus(node);
-            if (status == ResearchNode.Status.HIDDEN) continue;
+            if (ClientResearchState.getStatus(node) == ResearchNode.Status.HIDDEN) continue;
 
-            // Линии
             for (String pId : node.links()) {
-                ResearchNode p = ResearchRegistry.getNode(pId);
-                if (p != null && ClientResearchState.getStatus(p) != ResearchNode.Status.HIDDEN) {
+                ResearchNode parentNode = ResearchRegistry.getNode(pId);
+                if (parentNode != null) {
+                    Status parentStatus = ClientResearchState.getStatus(parentNode);
 
-//                    int lineColor = (status == Status.COMPLETED || status == Status.AVAILABLE) ? 0xFFFFFFFF : 0xFF333333;
-                    int lineColor = (status == Status.COMPLETED || status == Status.AVAILABLE) ? 0xFFE6CC00 : 0xFF2B2031;
-                    renderTechLine(g, p.treeX(), p.treeY(), node.treeX(), node.treeY(),
-                            lineColor); // COLOR LINE
+                    // Пропускаем, если родитель скрыт
+                    if (parentStatus == Status.HIDDEN) continue;
+
+                    // ГЛАВНОЕ ИЗМЕНЕНИЕ:
+                    // Цвет линии зависит от того, изучен ли РОДИТЕЛЬ
+                    int lineColor;
+                    if (parentStatus == Status.COMPLETED) {
+                        lineColor = 0xFFE6CC00; // Яркий (золотой), если путь проложен
+                    } else {
+                        lineColor = 0xFF2B2031; // Темный, если родитель еще не изучен
+                    }
+
+                    renderTechLine(g, parentNode.treeX(), parentNode.treeY(), node.treeX(), node.treeY(), lineColor);
                 }
             }
         }

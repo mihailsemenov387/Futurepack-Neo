@@ -31,7 +31,7 @@ public class ResearchTabsScreen extends Screen implements IScannerScreen {
     private int leftPos, topPos;
     private ResearchTab currentTab;
     private final TreeRenderComponent treeComponent;
-    private final EScannerMainScreen parent;
+    private final Screen parent;
 
 
     private int tabScrollOffset = 0;
@@ -39,7 +39,7 @@ public class ResearchTabsScreen extends Screen implements IScannerScreen {
     private Button btnScrollDown;
 
 
-    public ResearchTabsScreen(EScannerMainScreen mainScreen) {
+    public ResearchTabsScreen(Screen mainScreen) {
         super(Component.literal("Research Overview"));
         this.treeComponent = new TreeRenderComponent(this);
         this.parent = mainScreen;

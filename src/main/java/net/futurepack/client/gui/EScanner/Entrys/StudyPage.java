@@ -14,6 +14,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import static net.futurepack.research.ResearchHelper.parseSmartText;
+
 public class StudyPage extends AbstractResearchPage {
     private  Component text;
     private  ResourceLocation image;
@@ -56,8 +58,8 @@ public class StudyPage extends AbstractResearchPage {
 
     @Override
     public void readContentFromJson(JsonObject json) {
-        this.text = Component.literal(json.get("text").getAsString());
-        this.image =  ResourceLocation.fromNamespaceAndPath("futurepack",json.get("image").getAsString());
+        this.text = parseSmartText(json.get("text").getAsString());
+        this.image = ResourceLocation.fromNamespaceAndPath("futurepack", json.get("image").getAsString());
     }
 
 

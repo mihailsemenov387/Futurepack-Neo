@@ -79,10 +79,11 @@ public class EScannerReadScreen extends Screen implements IScannerScreen {
             this.minecraft.setScreen(backScreen);
             return true;
         }
+
         return super.mouseClicked(mx, my, btn);
     }
 
-    private boolean isBackClicked(double mx, double my) {
+    private boolean isBackClicked(double mx, double my) { // back button
         int xStart = (this.width - 185) / 2 + 51 + 5;
         int yStart = (this.height - 235) / 2 + 48 + 173 - 15;
         return mx >= xStart && mx <= xStart + 45 && my >= yStart && my <= yStart + 15;
@@ -116,8 +117,6 @@ public class EScannerReadScreen extends Screen implements IScannerScreen {
 
     @Override
     public boolean isPauseScreen() {
-        // Возвращаем false, чтобы игра НЕ ставилась на паузу
-        // и сервер НЕ пытался судорожно сохранять мир каждый раз.
         return false;
     }
 }

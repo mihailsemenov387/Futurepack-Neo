@@ -147,4 +147,25 @@ public class ResearchHelper {
     public enum ProgressType {
         REVEAL, COMPLETE, READ
     }
+
+    // TODO: new logic for default auto detection
+    public static Component parseSmartText(String input) {
+        if (input == null || input.isEmpty()) return Component.empty();
+
+        // Префикс \T - принудительный текст
+        if (input.startsWith("\\T")) {
+            return Component.literal(input.substring(2).stripLeading());
+        }
+
+        // Префикс \L - принудительная локализация
+        if (input.startsWith("\\L")) {
+            return Component.translatable(input.substring(2).trim());
+        }
+
+        // Логика по умолчанию (авто-определение)
+        if (input.contains(".")) {
+            return Component.translatable(input);
+        }
+        return Component.literal(input);
+    }
 }

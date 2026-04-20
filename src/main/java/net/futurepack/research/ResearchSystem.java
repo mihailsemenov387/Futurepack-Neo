@@ -34,7 +34,7 @@ public class ResearchSystem {
         }
 
         public NodeBuilder tab(String tabId) { this.tabId = tabId; return this; }
-        public NodeBuilder title(String name) { this.title = Component.literal(name); return this; }
+        public NodeBuilder title(Component name) { this.title = name; return this; }
         public NodeBuilder icon(Item item) { this.icon = new ItemStack(item); return this; }
         public NodeBuilder pos(int x, int y) { this.x = x; this.y = y; return this; }
         public NodeBuilder customIcon(ResourceLocation customIcon){ this.customIcon = customIcon; return this;}
